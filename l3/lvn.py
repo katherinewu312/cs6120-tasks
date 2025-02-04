@@ -37,6 +37,7 @@ def lvn(block: list[dict]) -> list[dict]:
                 # TODO: should break when a variable is reused later
                 var = state.table[state.val_to_row[value]].var
                 new_instr = {"args": [var], "dest": instr["dest"], "op": "id", "type": instr["type"]}
+                state.var_to_row[instr["dest"]] = state.val_to_row[value]
             else:
                 if "dest" in instr:
                     # New value
