@@ -1,4 +1,5 @@
 @main {
   v0: int = const 1;
   v1: int = id v0;
+  print v0;
 }

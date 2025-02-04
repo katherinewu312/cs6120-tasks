@@ -1,23 +1,4 @@
-{
-  "functions": [
-    {
-      "instrs": [
-        {
-          "dest": "v0",
-          "op": "const",
-          "type": "bool",
-          "value": true
-        },
-        {
-          "args": [
-            "v0"
-          ],
-          "dest": "v1",
-          "op": "id",
-          "type": "bool"
-        }
-      ],
-      "name": "main"
-    }
-  ]
+@main {
+  v0: bool = const true;
+  v1: bool = id v0;
 }

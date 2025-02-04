@@ -1,1 +1,1 @@
-command = "bril2json < {filename} | python ../../lvn.py"
+command = "bril2json < {filename} | python ../../lvn.py | bril2txt"
