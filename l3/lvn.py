@@ -35,8 +35,6 @@ def lvn(block: list[dict]) -> list[dict]:
             if value in state.val_to_row:
                 # Value has been computed before
                 # TODO: should break when a variable is reused later
-                # TODO: test this works for different types
-                # TODO test this works for effect operations
                 var = state.table[state.val_to_row[value]].var
                 new_instr = {"args": [var], "dest": instr["dest"], "op": "id", "type": instr["type"]}
             else:
