@@ -30,8 +30,12 @@ def lvn(block: list[dict]) -> list[dict]:
                 value = (instr["op"], instr["value"])
             else:
                 # Other instructions we map arguments to rows in the table
-                # TODO: this should break when variables were defined in a previous block
+                # Handle unknown variables which must have been defined in a prior block
+                for var in [a for a in instr["args"] if a not in state.var_to_row]:
+                    state.var_to_row[var] = len(state.table)
+                    state.table.append(LVNRow((), var))
                 value = (instr["op"], *[state.var_to_row[v] for v in instr["args"]])
+
             if value in state.val_to_row:
                 # Value has been computed before
                 # TODO: should break when a variable is reused later
@@ -52,7 +56,6 @@ def lvn(block: list[dict]) -> list[dict]:
 
         new_block.append(new_instr)
     return new_block
-
 
 
 if __name__ == '__main__':

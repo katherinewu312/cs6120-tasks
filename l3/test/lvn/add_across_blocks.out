@@ -1,0 +1,7 @@
+@main {
+  v: int = const 4;
+.here:
+  w: int = const 2;
+  x: int = add v w;
+  print x;
+}
