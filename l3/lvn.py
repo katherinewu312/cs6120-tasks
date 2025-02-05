@@ -21,8 +21,8 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
     state = LVN([], {}, {})
     new_block = []
     for index, instr in enumerate(block):
-        if ("op" not in instr) or (instr["op"] == "jmp") or (instr["op"] == "ret" and "args" not in instr) :
-            # We can ignore labels, jumps and returns with no value
+        if ("op" not in instr) or (instr["op"] in ["jmp", "nop"]) or (instr["op"] == "ret" and "args" not in instr) :
+            # We can ignore labels, jumps, nops and returns with no value
             new_instr = instr
         else:
             if instr["op"] == "const":
@@ -39,7 +39,7 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                 else:
                     value = (instr["op"], *[state.var_to_row[v] for v in instr["args"]])
 
-            if value in state.val_to_row and instr["op"] != "call":
+            if value in state.val_to_row and instr["op"] not in ["call", "alloc"]:
                 # Value has been computed before and is not a function call which may have side effects
                 var = state.table[state.val_to_row[value]].var
                 new_instr = {"args": [var], "dest": instr["dest"], "op": "id", "type": instr["type"]}
@@ -76,6 +76,9 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
 
 
 if __name__ == '__main__':
+    # from pathlib import Path
+    # program = json.load(Path("test/lvn/test.json").open())
+
     program = json.load(sys.stdin)
     for function in program['functions']:
         bbs = form_basic_blocks(function)
