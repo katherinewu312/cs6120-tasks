@@ -43,6 +43,11 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                 state.var_to_row[instr["dest"]] = state.val_to_row[value]
             else:
                 new_instr = instr.copy()
+
+                # Replace args
+                if "args" in instr:
+                    new_instr["args"] = [state.table[state.var_to_row[a]].var for a in instr["args"]]
+
                 if "dest" in instr:
                     # Check if dest is overwritten later, conservatively assume value will be different
                     var_overwrites = [i["dest"] for i in block[index+1:] if "dest" in i]
@@ -60,12 +65,8 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
 
                     # New value
                     state.val_to_row[value] = len(state.table)
-                    state.var_to_row[new_dest] = len(state.table)
+                    state.var_to_row[instr["dest"]] = len(state.table)
                     state.table.append(LVNRow(value, new_dest))
-
-                # Replace args
-                if "args" in instr:
-                    new_instr["args"] = [state.table[state.var_to_row[a]].var for a in instr["args"]]
 
         new_block.append(new_instr)
     return new_block
