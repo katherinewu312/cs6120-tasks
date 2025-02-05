@@ -21,8 +21,8 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
     state = LVN([], {}, {})
     new_block = []
     for index, instr in enumerate(block):
-        if "op" not in instr or instr["op"] == "jmp":
-            # Label or jump
+        if "args" not in instr:
+            # If an instruction has no args we don't care about the value
             new_instr = instr
         else:
             if instr["op"] == "const":
