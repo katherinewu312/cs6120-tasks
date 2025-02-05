@@ -20,7 +20,7 @@ def lvn(block: list[dict]) -> list[dict]:
     """Accepts a basic block of instructions and returns a copy rewritten using LVN"""
     state = LVN([], {}, {})
     new_block = []
-    for instr in block:
+    for index, instr in enumerate(block):
         if "op" not in instr:
             # Label
             new_instr = instr
@@ -43,14 +43,23 @@ def lvn(block: list[dict]) -> list[dict]:
                 new_instr = {"args": [var], "dest": instr["dest"], "op": "id", "type": instr["type"]}
                 state.var_to_row[instr["dest"]] = state.val_to_row[value]
             else:
+                new_instr = instr.copy()
                 if "dest" in instr:
+                    # Check if dest is overwritten later, conservatively assume value will be different
+                    var_overwrites = [i["dest"] for i in block[index+1:] if "dest" in i]
+                    if instr["dest"] in var_overwrites:
+                        # Generate new variable name
+                        new_dest = f"{instr['dest']}_lvn"
+                    else:
+                        new_dest = instr["dest"]
+                    new_instr["dest"] = new_dest
+
                     # New value
                     state.val_to_row[value] = len(state.table)
-                    state.var_to_row[instr["dest"]] = len(state.table)
-                    state.table.append(LVNRow(value, instr["dest"]))
+                    state.var_to_row[new_dest] = len(state.table)
+                    state.table.append(LVNRow(value, new_dest))
 
                 # Replace args
-                new_instr = instr.copy()
                 if "args" in instr:
                     new_instr["args"] = [state.table[state.var_to_row[a]].var for a in instr["args"]]
 

@@ -1,0 +1,8 @@
+@main {
+  v0: int = const 1;
+  v1: int = const 2;
+  v2_lvn: int = add v0 v1;
+  v2: int = id v0;
+  v3: int = id v2_lvn;
+  print v2_lvn;
+}
