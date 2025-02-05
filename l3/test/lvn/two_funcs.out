@@ -1,0 +1,16 @@
+@main {
+  v: int = const 4;
+  w: int = const 2;
+  x: int = call @add v w;
+  y: int = call @mul v w;
+  z: int = call @add v w;
+  print z;
+}
+@add(a: int, b: int): int {
+  ab: int = add a b;
+  ret ab;
+}
+@mul(a: int, b: int): int {
+  ab: int = mul a b;
+  ret ab;
+}

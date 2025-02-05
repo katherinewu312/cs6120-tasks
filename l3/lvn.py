@@ -36,8 +36,8 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                     state.table.append(LVNRow((), var))
                 value = (instr["op"], *[state.var_to_row[v] for v in instr["args"]])
 
-            if value in state.val_to_row:
-                # Value has been computed before
+            if value in state.val_to_row and instr["op"] != "call":
+                # Value has been computed before and is not a function call which may have side effects
                 var = state.table[state.val_to_row[value]].var
                 new_instr = {"args": [var], "dest": instr["dest"], "op": "id", "type": instr["type"]}
                 state.var_to_row[instr["dest"]] = state.val_to_row[value]
