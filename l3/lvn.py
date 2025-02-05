@@ -16,8 +16,8 @@ class LVN:
     val_to_row: dict[tuple, int] # Maps from a value to a table index
 
 
-def lvn(block: list[dict]) -> list[dict]:
-    """Accepts a basic block of instructions and returns a copy rewritten using LVN"""
+def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
+    """Accepts a basic block and a set of reserved variable names and returns a copy rewritten using LVN"""
     state = LVN([], {}, {})
     new_block = []
     for index, instr in enumerate(block):
@@ -38,7 +38,6 @@ def lvn(block: list[dict]) -> list[dict]:
 
             if value in state.val_to_row:
                 # Value has been computed before
-                # TODO: should break when a variable is reused later
                 var = state.table[state.val_to_row[value]].var
                 new_instr = {"args": [var], "dest": instr["dest"], "op": "id", "type": instr["type"]}
                 state.var_to_row[instr["dest"]] = state.val_to_row[value]
@@ -49,7 +48,12 @@ def lvn(block: list[dict]) -> list[dict]:
                     var_overwrites = [i["dest"] for i in block[index+1:] if "dest" in i]
                     if instr["dest"] in var_overwrites:
                         # Generate new variable name
-                        new_dest = f"{instr['dest']}_lvn"
+                        attempt = 1
+                        new_dest = f"{instr['dest']}_{attempt}"
+                        while new_dest in reserved_vars:
+                            attempt += 1
+                            new_dest = f"{instr['dest']}_{attempt}"
+                        reserved_vars.add(new_dest)
                     else:
                         new_dest = instr["dest"]
                     new_instr["dest"] = new_dest
@@ -71,7 +75,8 @@ if __name__ == '__main__':
     program = json.load(sys.stdin)
     for function in program['functions']:
         bbs = form_basic_blocks(function)
-        new_bbs = [lvn(b) for b in bbs]
+        rvs = set(instr["dest"] for instr in function["instrs"] if "dest" in instr)
+        new_bbs = [lvn(b, rvs) for b in bbs]
         function["instrs"] = []
         for nbb in new_bbs:
             function["instrs"].extend(nbb)
