@@ -50,8 +50,10 @@ def tdce():
         while tdce_loop(func):
             pass
         
-        print(basic_blocks)
-    
+        func['instrs'] = [x for xs in basic_blocks for x in xs] # flatten list
+        
+    json.dump(program, sys.stdout)
+
     
 if __name__ == '__main__':
     tdce()
