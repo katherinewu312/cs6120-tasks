@@ -34,7 +34,10 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                 for var in [a for a in instr["args"] if a not in state.var_to_row]:
                     state.var_to_row[var] = len(state.table)
                     state.table.append(LVNRow((), var))
-                value = (instr["op"], *[state.var_to_row[v] for v in instr["args"]])
+                if instr["op"] == "call":
+                    value = (instr["op"], " ".join(instr["funcs"]), *[state.var_to_row[v] for v in instr["args"]])
+                else:
+                    value = (instr["op"], *[state.var_to_row[v] for v in instr["args"]])
 
             if value in state.val_to_row and instr["op"] != "call":
                 # Value has been computed before and is not a function call which may have side effects
@@ -48,7 +51,7 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                 if "args" in instr:
                     new_instr["args"] = [state.table[state.var_to_row[a]].var for a in instr["args"]]
 
-                if "dest" in instr and instr["op"] != "call":
+                if "dest" in instr:
                     # Check if dest is overwritten later, conservatively assume value will be different
                     var_overwrites = [i["dest"] for i in block[index+1:] if "dest" in i]
                     if instr["dest"] in var_overwrites:
