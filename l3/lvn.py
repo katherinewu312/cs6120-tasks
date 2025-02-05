@@ -21,8 +21,8 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
     state = LVN([], {}, {})
     new_block = []
     for index, instr in enumerate(block):
-        if "args" not in instr:
-            # If an instruction has no args we don't care about the value
+        if ("op" not in instr) or (instr["op"] == "jmp") or (instr["op"] == "ret" and "args" not in instr) :
+            # We can ignore labels, jumps and returns with no value
             new_instr = instr
         else:
             if instr["op"] == "const":
@@ -48,7 +48,7 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                 if "args" in instr:
                     new_instr["args"] = [state.table[state.var_to_row[a]].var for a in instr["args"]]
 
-                if "dest" in instr:
+                if "dest" in instr and instr["op"] != "call":
                     # Check if dest is overwritten later, conservatively assume value will be different
                     var_overwrites = [i["dest"] for i in block[index+1:] if "dest" in i]
                     if instr["dest"] in var_overwrites:
