@@ -27,7 +27,7 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
         else:
             if instr["op"] == "const":
                 # const instructions have an explicit value
-                value = (instr["op"], instr["value"])
+                value = (instr["op"], instr["type"], instr["value"])
             else:
                 # Other instructions we map arguments to rows in the table
                 # Handle unknown variables which must have been defined in a prior block
