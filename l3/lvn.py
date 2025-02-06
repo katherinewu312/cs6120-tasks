@@ -37,7 +37,6 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
     new_block = []
     for index, instr in enumerate(block):
         if _ignore_instruction_lvn(instr):
-            # We can ignore labels, jumps, nops and returns with no value
             new_instr = instr
         else:
             if instr["op"] == "const":
