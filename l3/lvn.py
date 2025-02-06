@@ -31,7 +31,11 @@ def _ignore_instruction_lvn(instr: dict) -> bool:
     else:
         return False
 
-
+def canonicalize(value):
+    """Canonicalizes the value tuple to support commutativity"""
+    op, *nums = value
+    return (op, *sorted(nums))  
+    
 def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
     """Accepts a basic block and a set of reserved variable names and returns a copy rewritten using LVN"""
     state = LVN([], {}, {})
@@ -57,6 +61,8 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                     value = (instr["op"], " ".join(instr["funcs"]), *[state.var_to_row[v] for v in instr["args"]])
                 else:
                     value = (instr["op"], *[state.var_to_row[v] for v in instr["args"]])
+                    if instr["op"] in ["add", "mul", "eq", "and", "or"]:
+                        value = canonicalize(value)
             else:
                 # Handle function calls without args
                 value = (instr["op"], " ".join(instr["funcs"]))
