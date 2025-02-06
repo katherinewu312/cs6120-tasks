@@ -40,20 +40,18 @@ def tdce_loop(func):
     return changed
     
     
-def tdce():
+def tdce(program):
     global basic_blocks
-    program = json.load(sys.stdin)
     for func in program["functions"]:
         # initialize basic blocks for this function
         basic_blocks = form_basic_blocks(func)
         # iterate until convergence
         while tdce_loop(func):
             pass
-        
         func['instrs'] = [x for xs in basic_blocks for x in xs] # flatten list
-        
     json.dump(program, sys.stdout)
 
     
 if __name__ == '__main__':
-    tdce()
+    program = json.load(sys.stdin)
+    tdce(program)

@@ -3,6 +3,7 @@ import sys
 from dataclasses import dataclass
 
 from util import form_basic_blocks
+from tdce import tdce
 
 @dataclass
 class LVNRow:
@@ -101,4 +102,9 @@ if __name__ == '__main__':
         function["instrs"] = []
         for nbb in new_bbs:
             function["instrs"].extend(nbb)
-    json.dump(program, sys.stdout, indent=2)
+    
+    # post-processing: trivial dead code elimination 
+    tdce(program)
+    # print(program)
+    
+    # json.dump(program, sys.stdout, indent=2)
