@@ -43,7 +43,7 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
             if instr["op"] == "const":
                 # const instructions have an explicit value
                 value = (instr["op"], instr["type"], instr["value"])
-            else:
+            elif "args" in instr:
                 # Other instructions we map arguments to rows in the table
                 # Handle unknown variables which must have been defined in a prior block
                 for var in [a for a in instr["args"] if a not in state.var_to_row]:
@@ -53,6 +53,9 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                     value = (instr["op"], " ".join(instr["funcs"]), *[state.var_to_row[v] for v in instr["args"]])
                 else:
                     value = (instr["op"], *[state.var_to_row[v] for v in instr["args"]])
+            else:
+                # Handle function calls without args
+                value = (instr["op"], " ".join(instr["funcs"]))
 
             if value in state.val_to_row and instr["op"] not in ["call", "alloc"]:
                 # Value has been computed before and is not a function call which may have side effects

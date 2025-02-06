@@ -1,0 +1,7 @@
+@main {
+  x: int = call @zero;
+}
+@zero: int {
+  zero: int = const 0;
+  ret zero;
+}
