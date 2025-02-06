@@ -105,6 +105,3 @@ if __name__ == '__main__':
     
     # post-processing: trivial dead code elimination 
     tdce(program)
-    # print(program)
-    
-    # json.dump(program, sys.stdout, indent=2)
