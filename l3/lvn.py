@@ -1,3 +1,4 @@
+import argparse
 import json
 import sys
 from dataclasses import dataclass
@@ -47,10 +48,6 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
             if instr["op"] == "const":
                 # const instructions have an explicit value
                 value = (instr["op"], instr["type"], instr["value"])
-            elif instr["op"] == "id":
-                # handle copy propagation
-                # point these variables to the initial variable
-                state.var_to_row[instr["dest"]] = state.var_to_row[instr["args"][0]]
             elif "args" in instr:
                 # Other instructions we map arguments to rows in the table
                 # Handle unknown variables which must have been defined in a prior block
@@ -95,9 +92,14 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                     new_instr["dest"] = new_dest
 
                     # New value
-                    state.val_to_row[value] = len(state.table)
-                    state.var_to_row[instr["dest"]] = len(state.table)
-                    state.table.append(LVNRow(value, new_dest))
+                    if instr["op"] == "id":
+                        # handle copy propagation
+                        # point these variables to the initial variable
+                        state.var_to_row[instr["dest"]] = state.var_to_row[instr["args"][0]]
+                    else:
+                        state.val_to_row[value] = len(state.table)
+                        state.var_to_row[instr["dest"]] = len(state.table)
+                        state.table.append(LVNRow(value, new_dest))
 
         new_block.append(new_instr)
     return new_block
@@ -112,6 +114,12 @@ if __name__ == '__main__':
         function["instrs"] = []
         for nbb in new_bbs:
             function["instrs"].extend(nbb)
-    
-    # post-processing: trivial dead code elimination 
-    tdce(program)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dce', action='store_true', help='Run dead code elimination')
+    args = parser.parse_args()
+    if args.dce:
+        #post-processing: trivial dead code elimination
+        tdce(program)
+    else:
+        json.dump(program, sys.stdout, indent=2)
