@@ -32,7 +32,7 @@ def _ignore_instruction_lvn(instr: dict) -> bool:
         return False
 
 def canonicalize(value):
-    """Canonicalizes the value tuple to support commutativity. Additionally, perform constant folding."""
+    """Canonicalizes the value tuple to support commutativity"""
     op, *nums = value
     return (op, *sorted(nums))  
     
@@ -47,6 +47,10 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
             if instr["op"] == "const":
                 # const instructions have an explicit value
                 value = (instr["op"], instr["type"], instr["value"])
+            elif instr["op"] == "id":
+                # handle copy propagation
+                # point these variables to the initial variable
+                state.var_to_row[instr["dest"]] = state.var_to_row[instr["args"][0]]
             elif "args" in instr:
                 # Other instructions we map arguments to rows in the table
                 # Handle unknown variables which must have been defined in a prior block
@@ -58,11 +62,7 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                 else:
                     value = (instr["op"], *[state.var_to_row[v] for v in instr["args"]])
                     if instr["op"] in ["add", "mul", "eq", "and", "or"]:
-                       value = canonicalize(value)
-            elif instr["op"] == "id":
-                # handle copy propagation
-                # point these variables to the initial variable
-                state.var_to_row[instr["dest"]] = state.var_to_row[instr["args"][0]]
+                        value = canonicalize(value)
             else:
                 # Handle function calls without args
                 value = (instr["op"], " ".join(instr["funcs"]))
@@ -115,4 +115,3 @@ if __name__ == '__main__':
     
     # post-processing: trivial dead code elimination 
     tdce(program)
-    # json.dump(program,sys.stdout)
