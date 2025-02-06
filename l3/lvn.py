@@ -16,12 +16,27 @@ class LVN:
     val_to_row: dict[tuple, int] # Maps from a value to a table index
 
 
+def _ignore_instruction_lvn(instr: dict) -> bool:
+    """Returns a bool representing whether an instruction needs to be considered by LVN"""
+    if "op" not in instr:
+        # Label
+        return True
+    elif instr["op"] in ["jmp", "nop"]:
+        # Operations that never have dest or args
+        return True
+    elif instr["op"] in ["ret", "print"] and "args" not in instr:
+        # Operations that may not have args
+        return True
+    else:
+        return False
+
+
 def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
     """Accepts a basic block and a set of reserved variable names and returns a copy rewritten using LVN"""
     state = LVN([], {}, {})
     new_block = []
     for index, instr in enumerate(block):
-        if ("op" not in instr) or (instr["op"] in ["jmp", "nop"]) or (instr["op"] == "ret" and "args" not in instr) :
+        if _ignore_instruction_lvn(instr):
             # We can ignore labels, jumps, nops and returns with no value
             new_instr = instr
         else:
@@ -76,9 +91,6 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
 
 
 if __name__ == '__main__':
-    # from pathlib import Path
-    # program = json.load(Path("test/lvn/test.json").open())
-
     program = json.load(sys.stdin)
     for function in program['functions']:
         bbs = form_basic_blocks(function)
