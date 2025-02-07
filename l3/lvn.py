@@ -75,7 +75,7 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                 # Replace args
                 if "args" in instr:
                     new_instr["args"] = [state.table[state.var_to_row[a]].var for a in instr["args"]]
-                    
+
                 if "dest" in instr:
                     # Check if dest is overwritten later, conservatively assume value will be different
                     var_overwrites = [i["dest"] for i in block[index+1:] if "dest" in i]
