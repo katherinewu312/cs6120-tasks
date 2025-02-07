@@ -35,7 +35,7 @@ def _ignore_instruction_lvn(instr: dict) -> bool:
 def canonicalize(value):
     """Canonicalizes the value tuple to support commutativity"""
     op, *nums = value
-    return (op, *sorted(nums))  
+    return (op, *sorted(nums))
     
 def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
     """Accepts a basic block and a set of reserved variable names and returns a copy rewritten using LVN"""
@@ -60,6 +60,23 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                     value = (instr["op"], *[state.var_to_row[v] for v in instr["args"]])
                     if instr["op"] in ["add", "mul", "eq", "and", "or"]:
                         value = canonicalize(value)
+                        '''
+                        if instr["op"] in ["add","sub","mul","div"] and len(state.table[state.var_to_row[instr["args"][0]]].value)==3 and len(state.table[state.var_to_row[instr["args"][1]]].value)==3:
+                            # Handle constant folding
+                            if instr["op"] == "add":
+                                value = ("const", instr["type"], state.table[state.var_to_row[instr["args"][0]]].value[2] 
+                                        + state.table[state.var_to_row[instr["args"][1]]].value[2])
+                            if instr["op"] == "sub":
+                                value = ("const", instr["type"], state.table[state.var_to_row[instr["args"][0]]].value[2] 
+                                        - state.table[state.var_to_row[instr["args"][1]]].value[2])
+                            if instr["op"] == "mul":
+                                value = ("const", instr["type"], state.table[state.var_to_row[instr["args"][0]]].value[2] 
+                                        * state.table[state.var_to_row[instr["args"][1]]].value[2])
+                            if instr["op"] == "div":
+                                value = ("const", instr["type"], state.table[state.var_to_row[instr["args"][0]]].value[2] 
+                                        / state.table[state.var_to_row[instr["args"][1]]].value[2])
+                            instr = {"dest": instr["dest"], "op": "const", "type": instr["type"], "value": value[2]}
+                        '''
             else:
                 # Handle function calls without args
                 value = (instr["op"], " ".join(instr["funcs"]))
@@ -75,7 +92,7 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                 # Replace args
                 if "args" in instr:
                     new_instr["args"] = [state.table[state.var_to_row[a]].var for a in instr["args"]]
-                    
+
                 if "dest" in instr:
                     # Check if dest is overwritten later, conservatively assume value will be different
                     var_overwrites = [i["dest"] for i in block[index+1:] if "dest" in i]
@@ -90,7 +107,7 @@ def lvn(block: list[dict], reserved_vars: set[str]) -> list[dict]:
                     else:
                         new_dest = instr["dest"]
                     new_instr["dest"] = new_dest
-
+                    
                     # New value
                     if instr["op"] == "id" and state.table[state.var_to_row[instr["args"][0]]].value:
                         # Handle copy propagation except if the arg variable is unknown value
