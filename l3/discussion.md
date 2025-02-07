@@ -15,7 +15,11 @@ realized we needed to make our implementation aware of variable use across basic
 didn't overwrite variables in other blocks, so we included a set of reserved variables as part of our LVN state. We 
 also ran into a nasty bug where we were updating the "cloud" using newly generated variable names rather than the 
 original, which caused subsequent instructions referencing the value to not get renamed correctly as they were doing 
-a lookup using the original variable name. We also extended our implementation to handle ... TODO
+a lookup using the original variable name (covered by the lvn chained_dest_overwrite.bril test case). We also extended 
+our implementation to handle CSE exploiting commutativity and copy propagation. Copy propagation ended up being tricky 
+because we ran into a corner case in the (identified from the euler.bril benchmark) where doing copy propagation on 
+variables defined externally to the basic block caused incorrect execution because it would assign the same value to 
+the variable throughout the block even if it was overwritten (our lvn test case func_arg_reassign.bril covers this).
 
 To test our LVN implementation we used turnt to test cases that we knew 
 would be important before beginning (variables defined in previous basic blocks, variable renaming, CSE etc.) and 
