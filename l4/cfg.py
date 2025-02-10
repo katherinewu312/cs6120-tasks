@@ -28,31 +28,27 @@ def form_basic_blocks(func):
     return basic_blocks
 
 def build_cfg(basic_blocks):
-    by_name = dict()
+    label_to_block = dict()
     for i, basic_block in enumerate(basic_blocks):
         # Generate a name for the block
         if "label" in basic_block[0]:
             # The block has a label
             name = basic_block[0]["label"]
-        else:
-            # Make up a new name for this anonymous block
-            # Base the name off of the index of the block
-            name = str(i)
-        by_name[name] = basic_block
+            label_to_block[name] = i
     
     cfg = {}
-    for i,(name,basic_block) in enumerate(by_name.items()):
+    for i,basic_block in enumerate(basic_blocks):
         last = basic_block[-1]
         if "op" in last:
             if last["op"] in ["jmp", "br"]:
-                cfg[name] = last["labels"]
+                cfg[i] = [label_to_block[l] for l in last["labels"]]
             elif last["op"] in ["ret"]:
-                cfg[name] = []
+                cfg[i] = []
             else:
                 if i < len(basic_blocks)-1:
-                    cfg[name] = [list(by_name.keys())[i+1]]
+                    cfg[i] = [i+1]
                 else:
-                    cfg[name] = []
+                    cfg[i] = []
                     
     return cfg
                 
