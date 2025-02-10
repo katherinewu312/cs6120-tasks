@@ -43,12 +43,9 @@ def build_cfg(basic_blocks):
             if last["op"] in ["jmp", "br"]:
                 cfg[i] = [label_to_block[l] for l in last["labels"]]
             elif last["op"] in ["ret"]:
-                cfg[i] = []
+                cfg[i] = [len(basic_blocks)]
             else:
-                if i < len(basic_blocks)-1:
-                    cfg[i] = [i+1]
-                else:
-                    cfg[i] = []
+                cfg[i] = [i+1]
                     
     return cfg
                 
