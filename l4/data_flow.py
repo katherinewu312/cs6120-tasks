@@ -14,7 +14,16 @@ def _merge_sets(sets: list[set]) -> set:
 
 def _live_vars_transfer(block: list[dict], out_vars: set) -> set:
     """Given a block output compute the block input using the transfer function for live variable data flow"""
-    raise NotImplementedError
+    in_vars = set()
+    for i, instr in enumerate(reversed(block)):
+        # Remove variables that are killed
+        if "dest" in instr:
+            in_vars.discard(instr["dest"])
+        # Add variables that are used
+        if "args" in instr:
+            for arg in instr["args"]:
+                in_vars.add(arg)
+    return in_vars
 
 
 def live_variables(blocks: list[list[dict]], cfg: dict) -> tuple[dict, dict]:
@@ -47,4 +56,10 @@ if __name__ == "__main__":
     for func in program["functions"]:
         bbs = form_basic_blocks(func)
         c = build_cfg(bbs)
-        lvs = live_variables(bbs, c)
+        b_in, b_out = live_variables(bbs, c)
+        print(func["name"])
+        for bb in range(len(bbs)+1):
+            print(bb)
+            print(b_in[bb])
+            print(b_out[bb])
+
