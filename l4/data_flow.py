@@ -58,8 +58,10 @@ if __name__ == "__main__":
         c = build_cfg(bbs)
         b_in, b_out = live_variables(bbs, c)
         print(func["name"])
-        for bb in range(len(bbs)+1):
-            print(bb)
-            print(b_in[bb])
-            print(b_out[bb])
-
+        for i in range(len(bbs)+1):
+            if i < len(bbs):
+                print(bbs[i][0].get("label", f"b{i}"))
+            else:
+                print(f"b{i}")
+            print(f"in: {b_in[i]}")
+            print(f"out: {b_out[i]}")
