@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Callable
 from cfg import build_cfg, form_basic_blocks
 
-from data_flow import _live_vars_transfer, _merge_sets
+from live_vars import _live_vars_transfer, _merge_sets
 
 # Implemention of a generic solver that supports multiple analyses
 
