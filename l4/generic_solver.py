@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Callable
 from cfg import build_cfg, form_basic_blocks
 
-from live_vars import _live_vars_transfer, _merge_sets
+from live_vars import live_vars_transfer, merge_sets
 
 # Implemention of a generic solver that supports multiple analyses
 
@@ -50,8 +50,8 @@ DF_EXAMPLES = {
     "live" : Analysis(
         forward=False,
         init=set(),
-        merge=_merge_sets,
-        transfer=_live_vars_transfer
+        merge=merge_sets,
+        transfer=live_vars_transfer
     )
     
     # TODO: Implement analyses for reaching defs, constant prop, avalialble exps, etc.   

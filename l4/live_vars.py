@@ -4,7 +4,7 @@ import sys
 from cfg import build_cfg, form_basic_blocks
 
 
-def _merge_sets(sets: list[set]) -> set:
+def merge_sets(sets: list[set]) -> set:
     """Return a set that is the union of the input list of sets"""
     merged = set()
     for s in sets:
@@ -12,7 +12,7 @@ def _merge_sets(sets: list[set]) -> set:
     return merged
 
 
-def _live_vars_transfer(block: list[dict], out_vars: set) -> set:
+def live_vars_transfer(block: list[dict], out_vars: set) -> set:
     """Given a block output compute the block input using the transfer function for live variable data flow"""
     in_vars = set()
     for i, instr in enumerate(reversed(block)):
@@ -41,9 +41,9 @@ def live_variables(blocks: list[list[dict]], cfg: dict) -> tuple[dict, dict]:
     worklist = set(range(len(blocks)))
     while worklist:
         i = worklist.pop()
-        block_out[i] = _merge_sets([block_in[s] for s in cfg[i]])
+        block_out[i] = merge_sets([block_in[s] for s in cfg[i]])
         orig_block_in = block_in[i]
-        block_in[i] = _live_vars_transfer(blocks[i], block_out[i])
+        block_in[i] = live_vars_transfer(blocks[i], block_out[i])
         if block_in[i] != orig_block_in:
             # block_in changed, add predecessors to worklist
             worklist.union(set(pred_cfg[i]))
