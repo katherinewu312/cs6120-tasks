@@ -9,17 +9,30 @@ from cfg import build_cfg, form_basic_blocks
 def reaching_defs_transfer():
     raise NotImplementedError
 
-def const_prop_transfer(block: List[Dict], in_dict: Dict):
+def const_prop_transfer(block: List[Dict], in_dict: Dict) -> Dict:
+    """Transfer function for constant propagation
+
+    Args:
+        block (List[Dict]): The current block we're working on
+        in_dict (Dict): Input map, maps variables' names to their values 
+                        (if they exist, otherwise they're mapped to `None`)  
+
+    Returns:
+        Dict: Updated map from variable names to (possibly `None`) values 
+    """
+
+    # Python's default `copy` method creates a shallow copy, whereas
+    # we want `out_dict` to be independent from `in_dict`, so we use `deepcopy` 
     out_dict = deepcopy(in_dict)
     for instr in block:
-        if "dest" in instr and "args" in instr:
+        if "dest" in instr:
             dest = instr["dest"]
-            args = instr["args"]
-            if args in in_dict:
-                in_dict[dest] = pass # TODO: figure out what to do 
+            if instr["op"] == "const":
+                # Only handle Constant instructions
+                out_dict[dest] = instr["value"] 
             else:
-                in_dict[dest] = None 
-    pass 
+                out_dict[dest] = None 
+    return out_dict 
 
 
 
