@@ -11,8 +11,11 @@ from hypothesis import given, strategies as st
 # Hypothesis parameter: controls the max size of randomly generated lists/dicts
 HYPOTHESIS_MAX_SIZE = 5
 
+
 # Property-based tests for merge function
 class TestMerge(unittest.TestCase):
+    # Test that the output dict from the merge function preserves all the keys
+    # in the input list of dicts
     @given(
         st.lists(
             st.dictionaries(
@@ -26,6 +29,7 @@ class TestMerge(unittest.TestCase):
         merged_dict = const_prop_merge(dicts)
         self.assertEqual(all_keys, set(merged_dict.keys()))
 
+    # Test whether keys mapped to different values are indeed mapped to `None`
     @given(
         st.lists(
             st.dictionaries(
@@ -89,23 +93,47 @@ def const_prop_transfer(block: List[Dict], in_dict: Dict) -> Dict:
     return out_dict
 
 
+def get_predecessors(blocks: List[List[Dict]], cfg: Dict) -> Dict:
+    """Creates the predecessor dictionary for a CFG,
+       mapping each node's index to a list of indices for its predecesssor
+
+    Args:
+        blocks (List[List[Dict]]): a list of basic blocks
+        cfg (Dict): the existing CFG
+
+    Returns:
+        Dict: Predecessor map
+    """
+    preds = {i: [] for i in range(len(blocks) + 1)}
+    for source_node, target_nodes in cfg.items():
+        for node in target_nodes:
+            preds[node].append(source_node)
+    return preds
+
+
+# Instr = Dict[str, ...]
+# Block = List[Instrs]
+# CFG = Dict[Int, List[Int]] (maps each node index to a list of successors)
 def const_prop(blocks: List[List[Dict]], cfg: Dict):
     entry = cfg[0]
 
-    # Map each block to the in set of reaching defs (initially the empty set)
+    # Map each block to the in set of constants (initially the empty set)
     block_in = {b: set() for b in blocks}
 
     # Map each block to the out set of reaching defs
     block_out = {b: set() for b in blocks}
 
+    preds = get_predecessors(blocks, cfg)
+
     raise NotImplementedError
 
 
 if __name__ == "__main__":
+    # TODO: comment out this line when done
     unittest.main()
 
-    # program = json.load(sys.stdin)
-    # for func in program["functions"]:
-    #     blocks = form_basic_blocks(func)
-    #     c = build_cfg(blocks)
-    # const_prop(blocks, c)
+    program = json.load(sys.stdin)
+    for func in program["functions"]:
+        blocks = form_basic_blocks(func)
+        c = build_cfg(blocks)
+    const_prop(blocks, c)
