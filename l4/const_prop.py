@@ -3,7 +3,7 @@
 import json
 import sys
 from copy import deepcopy
-from typing import List, Dict, Set, Optional
+from typing import List, Dict, Set, Optional, Tuple
 from cfg import build_cfg, form_basic_blocks
 from functools import reduce
 
@@ -47,7 +47,9 @@ class TestMerge(unittest.TestCase):
             self.assertIsNone(merged_dict[key])
 
 
-def const_prop_merge(dicts: List[Dict]) -> Dict:
+def const_prop_merge(
+    dicts: List[Dict[str, Optional[int | bool]]],
+) -> Dict[str, Optional[int | bool]]:
     """Merge function for constant propagation: takes the union of all dicts
     contained within a list. Any keys that are mapped to different values
     within different dicts are automatically mapped to `None` in the output dict.
@@ -58,7 +60,7 @@ def const_prop_merge(dicts: List[Dict]) -> Dict:
     Returns:
         Dict: the union of all the dicts
     """
-    output_dict = dict()
+    output_dict: Dict[str, Optional[int | bool]] = dict()
     for d in dicts:
         for k in d.keys():
             if k in output_dict:
@@ -95,7 +97,9 @@ def const_prop_transfer(block: List[Dict], in_dict: Dict) -> Dict:
     return out_dict
 
 
-def get_predecessors(blocks: List[List[Dict]], cfg: Dict) -> Dict:
+def get_predecessors(
+    blocks: List[List[Dict]], cfg: Dict[int, List[int]]
+) -> Dict[int, List[int]]:
     """Creates the predecessor dictionary for a CFG,
        mapping each node's index to a list of indices for its predecesssor
 
@@ -106,7 +110,7 @@ def get_predecessors(blocks: List[List[Dict]], cfg: Dict) -> Dict:
     Returns:
         Dict: Predecessor map
     """
-    preds = {i: [] for i in range(len(blocks) + 1)}
+    preds: Dict[int, List[int]] = {i: [] for i in range(len(blocks) + 1)}
     for source_node, target_nodes in cfg.items():
         for node in target_nodes:
             preds[node].append(source_node)
@@ -116,7 +120,9 @@ def get_predecessors(blocks: List[List[Dict]], cfg: Dict) -> Dict:
 # Instr = Dict[str, ...]
 # Block = List[Instrs]
 # CFG = Dict[Int, List[Int]] (maps each node index to a list of successors)
-def const_prop(blocks: List[List[Dict]], cfg: Dict):
+def const_prop(
+    blocks: List[List[Dict]], cfg: Dict[int, List[int]]
+) -> Tuple[Dict, Dict]:
     n = len(blocks)
 
     # Map each block to the in set of constants (initially the empty dict)
@@ -124,8 +130,10 @@ def const_prop(blocks: List[List[Dict]], cfg: Dict):
         b: dict() for b in range(n + 1)
     }
 
-    # Map the (fake) final block to the empty dict
-    block_out: Dict[int, Dict[str, Optional[int | bool]]] = {n: dict()}
+    # Map all blocks to the empty dict
+    block_out: Dict[int, Dict[str, Optional[int | bool]]] = {
+        b: dict() for b in range(n + 1)
+    }
 
     preds = get_predecessors(blocks, cfg)
     worklist = set(range(len(blocks) + 1))
@@ -134,7 +142,7 @@ def const_prop(blocks: List[List[Dict]], cfg: Dict):
         block_in[b_idx] = const_prop_merge([block_out[p] for p in preds[b_idx]])
         original_block_out = block_out[b_idx]
         if b_idx < n:
-            block_out[b_idx] = const_prop_transfer(b_idx, block_in[b_idx])
+            block_out[b_idx] = const_prop_transfer(blocks[b_idx], block_in[b_idx])
         else:
             # Handle fake last block
             block_in[b_idx] = block_out[b_idx]
