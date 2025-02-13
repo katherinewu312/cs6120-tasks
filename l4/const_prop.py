@@ -72,11 +72,16 @@ class TestMerge(unittest.TestCase):
     )
     def test_overlapping_keys_mapped_to_none(self, dicts):
         merged_dict = const_prop_merge(dicts)
-        print(f"merged_dict = {merged_dict}")
         for key in merged_dict.keys():
-            all_values_same = reduce(lambda acc, d: acc and (d[key] == merged_dict[key]), dicts, True)
-
-            self.assertIsNone(merged_dict[key])
+            all_values_same = reduce(
+                lambda acc, d: acc and (d[key] == merged_dict[key])
+                if key in d
+                else acc,
+                dicts,
+                True,
+            )
+            value_is_none = merged_dict[key] == None
+            self.assertTrue(all_values_same or value_is_none)
 
     # Test that all key-value pairs in disjoint dicts are preserved
     @given(
@@ -198,9 +203,6 @@ def const_prop(
 
     preds = get_predecessors(blocks, cfg)
 
-    # TODO: remove
-    # print(f'preds = {preds}')
-
     worklist = set(range(len(blocks) + 1))
     while len(worklist) > 0:
         b_idx = worklist.pop()
@@ -220,11 +222,11 @@ def const_prop(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--test", action='store_true', help='Run Hypothesis tests')
+    parser.add_argument("--test", action="store_true", help="Run Hypothesis tests")
     args = parser.parse_args()
 
     if args.test:
-        unittest.main(argv=['first-arg-is-ignored'])
+        unittest.main(argv=["first-arg-is-ignored"])
     else:
         program = json.load(sys.stdin)
         for func in program["functions"]:
