@@ -1,0 +1,43 @@
+main
+b0
+	in: ['input']
+	out: ['index', 'input']
+for.cond.0
+	in: ['index', 'input']
+	out: ['index', 'input']
+for.body.0
+	in: ['index', 'input']
+	out: ['index', 'input', 'isBuzz']
+then.21
+	in: ['index', 'input', 'isBuzz']
+	out: ['index', 'input']
+then.23
+	in: ['index', 'input']
+	out: ['index', 'input']
+else.23
+	in: ['index', 'input']
+	out: ['index', 'input']
+endif.23
+	in: ['index', 'input']
+	out: ['index', 'input']
+else.21
+	in: ['index', 'input', 'isBuzz']
+	out: ['index', 'input']
+then.33
+	in: ['index', 'input']
+	out: ['index', 'input']
+else.33
+	in: ['index', 'input']
+	out: ['index', 'input']
+endif.33
+	in: ['index', 'input']
+	out: ['index', 'input']
+endif.21
+	in: ['index', 'input']
+	out: ['index', 'input']
+for.end.0
+	in: []
+	out: []
+b13
+	in: []
+	out: []

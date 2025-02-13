@@ -57,8 +57,6 @@ def live_variables(blocks: list[list[dict]], cfg: dict) -> tuple[dict, dict]:
 
 if __name__ == "__main__":
     program = json.load(sys.stdin)
-    # from pathlib import Path
-    # program = json.load(Path("test/test.json").open())
     for func in program["functions"]:
         bbs = form_basic_blocks(func)
         c = build_cfg(bbs)
