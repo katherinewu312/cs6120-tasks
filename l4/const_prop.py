@@ -3,7 +3,7 @@
 import json
 import sys
 from copy import deepcopy
-from typing import List, Dict, Set, Optional, Tuple
+from typing import List, Dict, Optional, Tuple
 from cfg import build_cfg, form_basic_blocks
 from functools import reduce
 
@@ -12,6 +12,26 @@ from hypothesis import given, strategies as st
 
 # Hypothesis parameter: controls the max size of randomly generated lists/dicts
 HYPOTHESIS_MAX_SIZE = 5
+
+# Some type aliases to improve readibility + help with Mypy type checking
+
+# A Bril value is either an int or a bool
+type BrilValue = int | bool
+
+# Variable names are just Python strings
+type Var = str
+
+# A Bril instruction is a dictionary (JSON)
+type Instr = Dict
+
+# A block is a list of instructions
+type Block = List[Instr]
+
+# Index for basic blocks / CFG nodes 
+type Idx = int
+
+# A CFG maps each node's index to a list of successor indices
+type CFG = Dict[Idx, List[Idx]]
 
 
 # Property-based tests for merge function
@@ -48,8 +68,8 @@ class TestMerge(unittest.TestCase):
 
 
 def const_prop_merge(
-    dicts: List[Dict[str, Optional[int | bool]]],
-) -> Dict[str, Optional[int | bool]]:
+    dicts: List[Dict[Var, Optional[BrilValue]]],
+) -> Dict[Var, Optional[BrilValue]]:
     """Merge function for constant propagation: takes the union of all dicts
     contained within a list. Any keys that are mapped to different values
     within different dicts are automatically mapped to `None` in the output dict.
@@ -60,7 +80,7 @@ def const_prop_merge(
     Returns:
         Dict: the union of all the dicts
     """
-    output_dict: Dict[str, Optional[int | bool]] = dict()
+    output_dict: Dict[Var, Optional[BrilValue]] = dict()
     for d in dicts:
         for k in d.keys():
             if k in output_dict:
@@ -71,7 +91,9 @@ def const_prop_merge(
     return output_dict
 
 
-def const_prop_transfer(block: List[Dict], in_dict: Dict) -> Dict:
+def const_prop_transfer(
+    block: Block, in_dict: Dict[Var, Optional[BrilValue]]
+) -> Dict[Var, Optional[BrilValue]]:
     """Transfer function for constant propagation
 
     Args:
@@ -97,9 +119,7 @@ def const_prop_transfer(block: List[Dict], in_dict: Dict) -> Dict:
     return out_dict
 
 
-def get_predecessors(
-    blocks: List[List[Dict]], cfg: Dict[int, List[int]]
-) -> Dict[int, List[int]]:
+def get_predecessors(blocks: List[Block], cfg: CFG) -> Dict[Idx, List[Idx]]:
     """Creates the predecessor dictionary for a CFG,
        mapping each node's index to a list of indices for its predecesssor
 
@@ -121,17 +141,20 @@ def get_predecessors(
 # Block = List[Instrs]
 # CFG = Dict[Int, List[Int]] (maps each node index to a list of successors)
 def const_prop(
-    blocks: List[List[Dict]], cfg: Dict[int, List[int]]
-) -> Tuple[Dict, Dict]:
+    blocks: List[Block], cfg: CFG
+) -> Tuple[
+    Dict[Idx, Dict[Var, Optional[BrilValue]]],
+    Dict[Idx, Dict[Var, Optional[BrilValue]]],
+]:
     n = len(blocks)
 
-    # Map each block to the in set of constants (initially the empty dict)
-    block_in: Dict[int, Dict[str, Optional[int | bool]]] = {
+    # Map each block's index to the in set of constants (initially the empty dict)
+    block_in: Dict[Idx, Dict[Var, Optional[BrilValue]]] = {
         b: dict() for b in range(n + 1)
     }
 
-    # Map all blocks to the empty dict
-    block_out: Dict[int, Dict[str, Optional[int | bool]]] = {
+    # Map all blocks' indices to the empty dict
+    block_out: Dict[Idx, Dict[Var, Optional[BrilValue]]] = {
         b: dict() for b in range(n + 1)
     }
 
@@ -167,5 +190,5 @@ if __name__ == "__main__":
                 print(blocks[i][0].get("label", f"b{i}"))
             else:
                 print(f"b{i}")
-            print(f"\tin: {sorted(block_in[i])}")
-            print(f"\tout: {sorted(block_out[i])}")
+            print(f"\tin: {block_in[i]}")
+            print(f"\tout: {block_out[i]}")
