@@ -221,6 +221,7 @@ def const_prop(
 
 
 if __name__ == "__main__":
+    # Set up an optional cmd-line argument `--test` that runs the test suite
     parser = argparse.ArgumentParser()
     parser.add_argument("--test", action="store_true", help="Run Hypothesis tests")
     args = parser.parse_args()

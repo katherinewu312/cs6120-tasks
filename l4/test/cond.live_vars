@@ -1,0 +1,16 @@
+main
+b0
+	in: []
+	out: ['a']
+left
+	in: ['a']
+	out: ['a', 'c']
+right
+	in: []
+	out: ['a', 'c']
+end
+	in: ['a', 'c']
+	out: []
+b4
+	in: []
+	out: []

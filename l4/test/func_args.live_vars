@@ -1,0 +1,14 @@
+main
+b0
+	in: []
+	out: []
+b1
+	in: []
+	out: []
+add
+b0
+	in: ['a', 'b']
+	out: []
+b1
+	in: []
+	out: []

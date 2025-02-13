@@ -1,2 +1,7 @@
 [envs.live_vars]
 command = "bril2json < {filename} | python ../live_vars.py"
+output.live_vars = "-"
+
+[envs.const_prop]
+command = "bril2json < {filename} | python ../const_prop.py"
+output.const_prop = "-"

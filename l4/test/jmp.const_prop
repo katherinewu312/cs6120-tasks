@@ -1,0 +1,12 @@
+b0
+	in: {}
+	out: {'v': 4}
+b1
+	in: {}
+	out: {'v': 2}
+somewhere
+	in: {'v': None}
+	out: {'v': None}
+b3
+	in: {}
+	out: {}

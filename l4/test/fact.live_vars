@@ -1,0 +1,16 @@
+main
+b0
+	in: []
+	out: ['i', 'result']
+header
+	in: ['i', 'result']
+	out: ['i', 'result']
+body
+	in: ['i', 'result']
+	out: ['i', 'result']
+end
+	in: ['result']
+	out: []
+b4
+	in: []
+	out: []

@@ -1,0 +1,13 @@
+main
+b0
+	in: []
+	out: ['v']
+here
+	in: []
+	out: ['v']
+there
+	in: ['v']
+	out: []
+b3
+	in: []
+	out: []

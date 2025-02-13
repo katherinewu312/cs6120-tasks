@@ -1,0 +1,12 @@
+b0
+	in: {}
+	out: {'v': 4, 'b': False}
+here
+	in: {'v': 4, 'b': False}
+	out: {'v': 2, 'b': False}
+there
+	in: {'v': None, 'b': False}
+	out: {'v': None, 'b': False}
+b3
+	in: {}
+	out: {}

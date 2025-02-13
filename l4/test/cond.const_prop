@@ -1,0 +1,15 @@
+b0
+	in: {}
+	out: {'a': 47, 'b': 42, 'cond': True}
+left
+	in: {'a': 47, 'b': 42, 'cond': True}
+	out: {'a': 47, 'b': 1, 'cond': True, 'c': 5}
+right
+	in: {'a': 47, 'b': 42, 'cond': True}
+	out: {'a': 2, 'b': 42, 'cond': True, 'c': 10}
+end
+	in: {'a': None, 'b': None, 'cond': True, 'c': None}
+	out: {'a': None, 'b': None, 'cond': True, 'c': None, 'd': None}
+b4
+	in: {}
+	out: {}

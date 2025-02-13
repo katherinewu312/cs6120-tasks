@@ -1,0 +1,15 @@
+b0
+	in: {}
+	out: {'result': 1, 'i': 8}
+header
+	in: {'result': None, 'i': None, 'zero': 0, 'cond': None, 'one': 1}
+	out: {'result': None, 'i': None, 'zero': 0, 'cond': None, 'one': 1}
+body
+	in: {'result': None, 'i': None, 'zero': 0, 'cond': None, 'one': 1}
+	out: {'result': None, 'i': None, 'zero': 0, 'cond': None, 'one': 1}
+end
+	in: {'result': None, 'i': None, 'zero': 0, 'cond': None, 'one': 1}
+	out: {'result': None, 'i': None, 'zero': 0, 'cond': None, 'one': 1}
+b4
+	in: {}
+	out: {}

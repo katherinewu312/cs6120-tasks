@@ -1,0 +1,12 @@
+b0
+	in: {}
+	out: {'a': 2, 'b': 4, 'c': None}
+b1
+	in: {}
+	out: {}
+b0
+	in: {}
+	out: {'c': None}
+b1
+	in: {}
+	out: {}
