@@ -1,5 +1,6 @@
-# pylint: disable=redefined-outer-name
+# pylint: disable=redefined-outer-name, cell-var-from-loop
 
+import argparse
 import json
 import sys
 from copy import deepcopy
@@ -27,7 +28,7 @@ type Instr = Dict
 # A block is a list of instructions
 type Block = List[Instr]
 
-# Index for basic blocks / CFG nodes 
+# Index for basic blocks / CFG nodes
 type Idx = int
 
 # A CFG maps each node's index to a list of successor indices
@@ -41,21 +42,29 @@ class TestMerge(unittest.TestCase):
     @given(
         st.lists(
             st.dictionaries(
-                st.characters(), st.integers(), max_size=HYPOTHESIS_MAX_SIZE
+                st.sampled_from(["a", "b", "c", "d"]),
+                st.integers(),
+                max_size=HYPOTHESIS_MAX_SIZE,
             ),
+            min_size=1,
             max_size=HYPOTHESIS_MAX_SIZE,
         ),
     )
     def test_all_keys_present_in_merged_dict(self, dicts):
-        all_keys = reduce(lambda acc, d: acc.intersection(set(d.keys())), dicts, set())
         merged_dict = const_prop_merge(dicts)
-        self.assertEqual(all_keys, set(merged_dict.keys()))
+        merged_dict_keys = set(merged_dict.keys())
+        for d in dicts:
+            d_keys = set(d.keys())
+            self.assertTrue(d_keys.issubset(merged_dict_keys))
 
     # Test whether keys mapped to different values are indeed mapped to `None`
     @given(
         st.lists(
             st.dictionaries(
-                st.sampled_from(["a", "b", "c"]), st.integers(), min_size=1
+                st.sampled_from(["a", "b", "c", "d"]),
+                st.integers(),
+                min_size=1,
+                max_size=HYPOTHESIS_MAX_SIZE,
             ),
             min_size=2,
             max_size=HYPOTHESIS_MAX_SIZE,
@@ -63,8 +72,29 @@ class TestMerge(unittest.TestCase):
     )
     def test_overlapping_keys_mapped_to_none(self, dicts):
         merged_dict = const_prop_merge(dicts)
+        print(f"merged_dict = {merged_dict}")
         for key in merged_dict.keys():
+            all_values_same = reduce(lambda acc, d: acc and (d[key] == merged_dict[key]), dicts, True)
+
             self.assertIsNone(merged_dict[key])
+
+    # Test that all key-value pairs in disjoint dicts are preserved
+    @given(
+        st.lists(
+            st.dictionaries(
+                st.sampled_from(["a", "b", "c", "d"]),
+                st.integers(),
+                max_size=HYPOTHESIS_MAX_SIZE,
+            ),
+            min_size=1,
+            unique_by=lambda d: frozenset(d.items()),
+            max_size=HYPOTHESIS_MAX_SIZE,
+        ),
+    )
+    def test_disjoint_dicts(self, dicts):
+        naive_dict_union = reduce(lambda acc, d: d | acc, dicts, dict())
+        merged_dict = const_prop_merge(dicts)
+        self.assertEqual(naive_dict_union, merged_dict)
 
 
 def const_prop_merge(
@@ -86,8 +116,8 @@ def const_prop_merge(
             if k in output_dict:
                 if output_dict[k] != d[k]:
                     output_dict[k] = None
-                else:
-                    output_dict[k] = d[k]
+            else:
+                output_dict[k] = d[k]
     return output_dict
 
 
@@ -130,22 +160,30 @@ def get_predecessors(blocks: List[Block], cfg: CFG) -> Dict[Idx, List[Idx]]:
     Returns:
         Dict: Predecessor map
     """
-    preds: Dict[int, List[int]] = {i: [] for i in range(len(blocks) + 1)}
+    preds: Dict[Idx, List[Idx]] = {i: [] for i in range(len(blocks) + 1)}
     for source_node, target_nodes in cfg.items():
         for node in target_nodes:
             preds[node].append(source_node)
     return preds
 
 
-# Instr = Dict[str, ...]
-# Block = List[Instrs]
-# CFG = Dict[Int, List[Int]] (maps each node index to a list of successors)
 def const_prop(
     blocks: List[Block], cfg: CFG
 ) -> Tuple[
     Dict[Idx, Dict[Var, Optional[BrilValue]]],
     Dict[Idx, Dict[Var, Optional[BrilValue]]],
 ]:
+    """Main function that performs the constant propagation dataflow analysis
+
+    Args:
+        blocks (List[Block]): list of basic blocks
+        cfg (CFG): the CFG
+
+    Returns:
+        A pair consisting of `(block_in, block_out)` (two dictionaries which map
+        each block's index to a dict containing the constants in that block)
+    """
+
     n = len(blocks)
 
     # Map each block's index to the in set of constants (initially the empty dict)
@@ -159,6 +197,10 @@ def const_prop(
     }
 
     preds = get_predecessors(blocks, cfg)
+
+    # TODO: remove
+    # print(f'preds = {preds}')
+
     worklist = set(range(len(blocks) + 1))
     while len(worklist) > 0:
         b_idx = worklist.pop()
@@ -177,18 +219,22 @@ def const_prop(
 
 
 if __name__ == "__main__":
-    # TODO: comment out this line when done
-    # unittest.main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--test", action='store_true', help='Run Hypothesis tests')
+    args = parser.parse_args()
 
-    program = json.load(sys.stdin)
-    for func in program["functions"]:
-        blocks = form_basic_blocks(func)
-        cfg = build_cfg(blocks)
-        block_in, block_out = const_prop(blocks, cfg)
-        for i in range(len(blocks) + 1):
-            if i < len(blocks):
-                print(blocks[i][0].get("label", f"b{i}"))
-            else:
-                print(f"b{i}")
-            print(f"\tin: {block_in[i]}")
-            print(f"\tout: {block_out[i]}")
+    if args.test:
+        unittest.main(argv=['first-arg-is-ignored'])
+    else:
+        program = json.load(sys.stdin)
+        for func in program["functions"]:
+            blocks = form_basic_blocks(func)
+            cfg = build_cfg(blocks)
+            block_in, block_out = const_prop(blocks, cfg)
+            for i in range(len(blocks) + 1):
+                if i < len(blocks):
+                    print(blocks[i][0].get("label", f"b{i}"))
+                else:
+                    print(f"b{i}")
+                print(f"\tin: {block_in[i]}")
+                print(f"\tout: {block_out[i]}")
