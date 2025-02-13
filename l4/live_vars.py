@@ -4,7 +4,7 @@ import sys
 from cfg import build_cfg, form_basic_blocks
 
 
-def merge_sets(sets: list[set]) -> set:
+def live_vars_merge(sets: list[set]) -> set:
     """Return a set that is the union of the input list of sets"""
     merged = set()
     for s in sets:
@@ -41,7 +41,7 @@ def live_variables(blocks: list[list[dict]], cfg: dict) -> tuple[dict, dict]:
     worklist = set(range(len(blocks)+1))
     while worklist:
         i = worklist.pop()
-        block_out[i] = merge_sets([block_in[s] for s in cfg[i]])
+        block_out[i] = live_vars_merge([block_in[s] for s in cfg[i]])
         orig_block_in = block_in[i]
         if i < len(blocks):
             block_in[i] = live_vars_transfer(blocks[i], block_out[i])
