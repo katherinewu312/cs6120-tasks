@@ -1,7 +1,9 @@
+# pylint: disable=redefined-outer-name
+
 import json
 import sys
 from copy import deepcopy
-from typing import List, Dict, Set
+from typing import List, Dict, Set, Optional
 from cfg import build_cfg, form_basic_blocks
 from functools import reduce
 
@@ -115,25 +117,47 @@ def get_predecessors(blocks: List[List[Dict]], cfg: Dict) -> Dict:
 # Block = List[Instrs]
 # CFG = Dict[Int, List[Int]] (maps each node index to a list of successors)
 def const_prop(blocks: List[List[Dict]], cfg: Dict):
-    entry = cfg[0]
+    n = len(blocks)
 
-    # Map each block to the in set of constants (initially the empty set)
-    block_in = {b: set() for b in blocks}
+    # Map each block to the in set of constants (initially the empty dict)
+    block_in: Dict[int, Dict[str, Optional[int | bool]]] = {
+        b: dict() for b in range(n + 1)
+    }
 
-    # Map each block to the out set of reaching defs
-    block_out = {b: set() for b in blocks}
+    # Map the (fake) final block to the empty dict
+    block_out: Dict[int, Dict[str, Optional[int | bool]]] = {n: dict()}
 
     preds = get_predecessors(blocks, cfg)
+    worklist = set(range(len(blocks) + 1))
+    while len(worklist) > 0:
+        b_idx = worklist.pop()
+        block_in[b_idx] = const_prop_merge([block_out[p] for p in preds[b_idx]])
+        original_block_out = block_out[b_idx]
+        if b_idx < n:
+            block_out[b_idx] = const_prop_transfer(b_idx, block_in[b_idx])
+        else:
+            # Handle fake last block
+            block_in[b_idx] = block_out[b_idx]
+        if block_out[b_idx] != original_block_out:
+            successors = cfg[b_idx]
+            worklist.update(successors)
 
-    raise NotImplementedError
+    return (block_in, block_out)
 
 
 if __name__ == "__main__":
     # TODO: comment out this line when done
-    unittest.main()
+    # unittest.main()
 
     program = json.load(sys.stdin)
     for func in program["functions"]:
         blocks = form_basic_blocks(func)
-        c = build_cfg(blocks)
-    const_prop(blocks, c)
+        cfg = build_cfg(blocks)
+        block_in, block_out = const_prop(blocks, cfg)
+        for i in range(len(blocks) + 1):
+            if i < len(blocks):
+                print(blocks[i][0].get("label", f"b{i}"))
+            else:
+                print(f"b{i}")
+            print(f"\tin: {sorted(block_in[i])}")
+            print(f"\tout: {sorted(block_out[i])}")
