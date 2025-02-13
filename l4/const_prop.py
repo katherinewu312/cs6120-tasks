@@ -3,18 +3,54 @@ import sys
 from copy import deepcopy
 from typing import List, Dict, Set
 from cfg import build_cfg, form_basic_blocks
+from functools import reduce
+
+import unittest
+from hypothesis import given, strategies as st
+
+# Hypothesis parameter: controls the max size of randomly generated lists/dicts
+HYPOTHESIS_MAX_SIZE = 5
+
+# Property-based tests for merge function
+class TestMerge(unittest.TestCase):
+    @given(
+        st.lists(
+            st.dictionaries(
+                st.characters(), st.integers(), max_size=HYPOTHESIS_MAX_SIZE
+            ),
+            max_size=HYPOTHESIS_MAX_SIZE,
+        ),
+    )
+    def test_all_keys_present_in_merged_dict(self, dicts):
+        all_keys = reduce(lambda acc, d: acc.intersection(set(d.keys())), dicts, set())
+        merged_dict = const_prop_merge(dicts)
+        self.assertEqual(all_keys, set(merged_dict.keys()))
+
+    @given(
+        st.lists(
+            st.dictionaries(
+                st.sampled_from(["a", "b", "c"]), st.integers(), min_size=1
+            ),
+            min_size=2,
+            max_size=HYPOTHESIS_MAX_SIZE,
+        )
+    )
+    def test_overlapping_keys_mapped_to_none(self, dicts):
+        merged_dict = const_prop_merge(dicts)
+        for key in merged_dict.keys():
+            self.assertIsNone(merged_dict[key])
 
 
 def const_prop_merge(dicts: List[Dict]) -> Dict:
     """Merge function for constant propagation: takes the union of all dicts
-    contained withina list. Any keys that are mapped to different values 
+    contained within a list. Any keys that are mapped to different values
     within different dicts are automatically mapped to `None` in the output dict.
 
     Args:
         dicts (List[Dict]): a list of dicts
 
     Returns:
-        Dict: the union of all the dicts 
+        Dict: the union of all the dicts
     """
     output_dict = dict()
     for d in dicts:
@@ -66,8 +102,10 @@ def const_prop(blocks: List[List[Dict]], cfg: Dict):
 
 
 if __name__ == "__main__":
-    program = json.load(sys.stdin)
-    for func in program["functions"]:
-        blocks = form_basic_blocks(func)
-        c = build_cfg(blocks)
-        # const_prop(blocks, c)
+    unittest.main()
+
+    # program = json.load(sys.stdin)
+    # for func in program["functions"]:
+    #     blocks = form_basic_blocks(func)
+    #     c = build_cfg(blocks)
+    # const_prop(blocks, c)
