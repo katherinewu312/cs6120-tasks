@@ -11,9 +11,6 @@ from functools import reduce
 import unittest
 from hypothesis import given, strategies as st
 
-# Hypothesis parameter: controls the max size of randomly generated lists/dicts
-HYPOTHESIS_MAX_SIZE = 5
-
 # Some type aliases to improve readibility + help with Mypy type checking
 
 # A Bril value is either an int or a bool
@@ -37,17 +34,36 @@ type CFG = Dict[Idx, List[Idx]]
 
 # Property-based tests for merge function
 class TestMerge(unittest.TestCase):
+    # Generates non-empty lists of random dicts
+    # mapping {'a', 'b', 'c', 'd'} -> int
+    char_to_int_dict = st.dictionaries(
+        keys=st.sampled_from(["a", "b", "c", "d"]),
+        values=st.integers(),
+        min_size=1,
+        max_size=5,
+    )
+
+    # Generates a list of disjoint dicts (disjoint keys & disjoint values)
+    disjoint_dicts = st.lists(
+        char_to_int_dict,
+        min_size=2,
+        unique_by=lambda d: frozenset(d.items()),
+    ).filter(
+        lambda dicts: all(
+            len(set(d1.keys()) & set(d2.keys())) == 0
+            and len(set(d1.values()) & set(d2.values())) == 0
+            for i, d1 in enumerate(dicts)
+            for d2 in dicts[i + 1 :]
+        )
+    )
+
     # Test that the output dict from the merge function preserves all the keys
     # in the input list of dicts
     @given(
         st.lists(
-            st.dictionaries(
-                st.sampled_from(["a", "b", "c", "d"]),
-                st.integers(),
-                max_size=HYPOTHESIS_MAX_SIZE,
-            ),
+            char_to_int_dict,
             min_size=1,
-            max_size=HYPOTHESIS_MAX_SIZE,
+            max_size=5,
         ),
     )
     def test_all_keys_present_in_merged_dict(self, dicts):
@@ -60,14 +76,9 @@ class TestMerge(unittest.TestCase):
     # Test whether keys mapped to different values are indeed mapped to `None`
     @given(
         st.lists(
-            st.dictionaries(
-                st.sampled_from(["a", "b", "c", "d"]),
-                st.integers(),
-                min_size=1,
-                max_size=HYPOTHESIS_MAX_SIZE,
-            ),
+            char_to_int_dict,
             min_size=2,
-            max_size=HYPOTHESIS_MAX_SIZE,
+            max_size=5,
         )
     )
     def test_overlapping_keys_mapped_to_none(self, dicts):
@@ -80,22 +91,11 @@ class TestMerge(unittest.TestCase):
                 dicts,
                 True,
             )
-            value_is_none = merged_dict[key] == None
+            value_is_none = merged_dict[key] is None
             self.assertTrue(all_values_same or value_is_none)
 
     # Test that all key-value pairs in disjoint dicts are preserved
-    @given(
-        st.lists(
-            st.dictionaries(
-                st.sampled_from(["a", "b", "c", "d"]),
-                st.integers(),
-                max_size=HYPOTHESIS_MAX_SIZE,
-            ),
-            min_size=1,
-            unique_by=lambda d: frozenset(d.items()),
-            max_size=HYPOTHESIS_MAX_SIZE,
-        ),
-    )
+    @given(disjoint_dicts)
     def test_disjoint_dicts(self, dicts):
         naive_dict_union = reduce(lambda acc, d: d | acc, dicts, dict())
         merged_dict = const_prop_merge(dicts)
