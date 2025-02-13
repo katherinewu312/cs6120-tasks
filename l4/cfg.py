@@ -46,7 +46,7 @@ def build_cfg(basic_blocks):
                 cfg[i] = [len(basic_blocks)]
             else:
                 cfg[i] = [i+1]
-                    
+    cfg[len(basic_blocks)] = []
     return cfg
                 
 def cfg():

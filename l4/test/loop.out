@@ -1,0 +1,13 @@
+main
+b0
+	in: []
+	out: ['a', 'one', 'v', 'zero']
+loop
+	in: ['a', 'one', 'v', 'zero']
+	out: ['a', 'one', 'v', 'zero']
+end
+	in: ['a']
+	out: []
+b3
+	in: []
+	out: []

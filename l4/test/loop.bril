@@ -1,0 +1,13 @@
+@main {
+  v: int = const 4;
+  zero: int = const 0;
+  one: int = const 1;
+  a: int = const 10;
+.loop:
+  v: int = sub v one;
+  a: int = add a one;
+  b: bool = eq v zero;
+  br b .end .loop;
+.end:
+  print a;
+}

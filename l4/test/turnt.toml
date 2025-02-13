@@ -1,0 +1,2 @@
+[envs.live_vars]
+command = "bril2json < {filename} | python ../live_vars.py"
