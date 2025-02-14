@@ -1,10 +1,7 @@
 Group (@ngernest, @katherinewu312, @samuelbreckenridge)
 
 [Code](https://github.com/katherinewu312/cs6120-tasks/tree/main/l4)
-
-Katherine: implemented generic solver
-Sam: implemented live variables 
-Ernest: implemented constant propagation
+(Katherine: generic solver, Sam: live variables, Ernest: constant propagation)
 
 As a first step we implemented a data flow analysis to identify live variables. Setting up a skeleton of the solver 
 was pretty straightforward, although we did have to be a bit careful about setting things up consistently to run 
