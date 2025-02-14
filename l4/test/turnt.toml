@@ -8,7 +8,7 @@ output.const_prop = "-"
 
 [envs.generic_live_vars]
 command = "bril2json < {filename} | python ../generic_solver.py live"
-output.generic_live_vars = "-"
+output.live_vars = "-"
 
 [envs.generic_const_prop]
 command = "bril2json < {filename} | python ../generic_solver.py const"
