@@ -5,6 +5,7 @@ from typing import Any, Callable
 from cfg import build_cfg, form_basic_blocks
 
 from live_vars import live_vars_transfer, live_vars_merge
+from const_prop import const_prop_transfer, const_prop_merge
 
 # Implemention of a generic solver that supports multiple analyses
 
@@ -47,14 +48,19 @@ def dataflow(basic_blocks: list[list[dict]], _cfg: dict, analysis: Analysis):
 
 
 DF_EXAMPLES = {
-    "live" : Analysis(
+    "live": Analysis(
         forward=False,
         init=set(),
         merge=live_vars_merge,
         transfer=live_vars_transfer
+    ),
+
+    "const": Analysis(
+        forward=True,
+        init=dict(),
+        merge=const_prop_merge,
+        transfer=const_prop_transfer
     )
-    
-    # TODO: Implement analyses for reaching defs, constant prop, avalialble exps, etc.   
 }
 
 if __name__ == "__main__":
