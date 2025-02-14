@@ -6,9 +6,9 @@
 First, install uv following the instructions [here](https://docs.astral.sh/uv/getting-started/installation/#standalone-installer).
 
 To create a virtualenv using [uv](https://docs.astral.sh/uv/), run the following in the 
-top-level directory:
+top-level directory. (Note that Python 3.12 or newer is required.)
 ```bash
-$ uv venv cs6120 
+$ uv venv cs6120 --python 3.12
 ```
 (this creates a virtualenv called `cs6120`).
 
