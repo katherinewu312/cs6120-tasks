@@ -1,14 +1,14 @@
 main
 b0
-	in: {}
-	out: {'a': 2, 'b': 4, 'c': None}
+	in: []
+	out: [('a', 2), ('b', 4), ('c', None)]
 b1
-	in: {'a': 2, 'b': 4, 'c': None}
-	out: {'a': 2, 'b': 4, 'c': None}
+	in: [('a', 2), ('b', 4), ('c', None)]
+	out: [('a', 2), ('b', 4), ('c', None)]
 add
 b0
-	in: {}
-	out: {'c': None}
+	in: []
+	out: [('c', None)]
 b1
-	in: {'c': None}
-	out: {'c': None}
+	in: [('c', None)]
+	out: [('c', None)]

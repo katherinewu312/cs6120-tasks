@@ -1,13 +1,13 @@
 main
 b0
-	in: {}
-	out: {'v': 4}
+	in: []
+	out: [('v', 4)]
 b1
-	in: {}
-	out: {'v': 2}
+	in: []
+	out: [('v', 2)]
 somewhere
-	in: {'v': None}
-	out: {'v': None}
+	in: [('v', None)]
+	out: [('v', None)]
 b3
-	in: {'v': None}
-	out: {'v': None}
+	in: [('v', None)]
+	out: [('v', None)]

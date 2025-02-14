@@ -1,16 +1,16 @@
 main
 b0
-	in: {}
-	out: {'a': 47, 'b': 42}
+	in: []
+	out: [('a', 47), ('b', 42)]
 left
-	in: {'a': 47, 'b': 42}
-	out: {'a': 47, 'b': 1, 'c': 5}
+	in: [('a', 47), ('b', 42)]
+	out: [('a', 47), ('b', 1), ('c', 5)]
 right
-	in: {'a': 47, 'b': 42}
-	out: {'a': 2, 'b': 42, 'c': 10}
+	in: [('a', 47), ('b', 42)]
+	out: [('a', 2), ('b', 42), ('c', 10)]
 end
-	in: {'a': None, 'b': None, 'c': None}
-	out: {'a': None, 'b': None, 'c': None, 'd': None}
+	in: [('a', None), ('b', None), ('c', None)]
+	out: [('a', None), ('b', None), ('c', None), ('d', None)]
 b4
-	in: {'a': None, 'b': None, 'c': None, 'd': None}
-	out: {'a': None, 'b': None, 'c': None, 'd': None}
+	in: [('a', None), ('b', None), ('c', None), ('d', None)]
+	out: [('a', None), ('b', None), ('c', None), ('d', None)]

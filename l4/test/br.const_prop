@@ -1,13 +1,13 @@
 main
 b0
-	in: {}
-	out: {'v': 4, 'b': False}
+	in: []
+	out: [('b', False), ('v', 4)]
 here
-	in: {'v': 4, 'b': False}
-	out: {'v': 2, 'b': False}
+	in: [('b', False), ('v', 4)]
+	out: [('b', False), ('v', 2)]
 there
-	in: {'v': None, 'b': False}
-	out: {'v': None, 'b': False}
+	in: [('b', False), ('v', None)]
+	out: [('b', False), ('v', None)]
 b3
-	in: {'v': None, 'b': False}
-	out: {'v': None, 'b': False}
+	in: [('b', False), ('v', None)]
+	out: [('b', False), ('v', None)]

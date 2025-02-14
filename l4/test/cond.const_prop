@@ -1,16 +1,16 @@
 main
 b0
-	in: {}
-	out: {'a': 47, 'b': 42, 'cond': True}
+	in: []
+	out: [('a', 47), ('b', 42), ('cond', True)]
 left
-	in: {'a': 47, 'b': 42, 'cond': True}
-	out: {'a': 47, 'b': 1, 'cond': True, 'c': 5}
+	in: [('a', 47), ('b', 42), ('cond', True)]
+	out: [('a', 47), ('b', 1), ('c', 5), ('cond', True)]
 right
-	in: {'a': 47, 'b': 42, 'cond': True}
-	out: {'a': 2, 'b': 42, 'cond': True, 'c': 10}
+	in: [('a', 47), ('b', 42), ('cond', True)]
+	out: [('a', 2), ('b', 42), ('c', 10), ('cond', True)]
 end
-	in: {'a': None, 'b': None, 'cond': True, 'c': None}
-	out: {'a': None, 'b': None, 'cond': True, 'c': None, 'd': None}
+	in: [('a', None), ('b', None), ('c', None), ('cond', True)]
+	out: [('a', None), ('b', None), ('c', None), ('cond', True), ('d', None)]
 b4
-	in: {'a': None, 'b': None, 'cond': True, 'c': None, 'd': None}
-	out: {'a': None, 'b': None, 'cond': True, 'c': None, 'd': None}
+	in: [('a', None), ('b', None), ('c', None), ('cond', True), ('d', None)]
+	out: [('a', None), ('b', None), ('c', None), ('cond', True), ('d', None)]

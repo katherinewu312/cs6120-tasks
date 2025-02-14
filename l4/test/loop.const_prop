@@ -1,13 +1,13 @@
 main
 b0
-	in: {}
-	out: {'v': 4, 'zero': 0, 'one': 1, 'a': 10}
+	in: []
+	out: [('a', 10), ('one', 1), ('v', 4), ('zero', 0)]
 loop
-	in: {'v': None, 'zero': 0, 'one': 1, 'a': None, 'b': None}
-	out: {'v': None, 'zero': 0, 'one': 1, 'a': None, 'b': None}
+	in: [('a', None), ('b', None), ('one', 1), ('v', None), ('zero', 0)]
+	out: [('a', None), ('b', None), ('one', 1), ('v', None), ('zero', 0)]
 end
-	in: {'v': None, 'zero': 0, 'one': 1, 'a': None, 'b': None}
-	out: {'v': None, 'zero': 0, 'one': 1, 'a': None, 'b': None}
+	in: [('a', None), ('b', None), ('one', 1), ('v', None), ('zero', 0)]
+	out: [('a', None), ('b', None), ('one', 1), ('v', None), ('zero', 0)]
 b3
-	in: {'v': None, 'zero': 0, 'one': 1, 'a': None, 'b': None}
-	out: {'v': None, 'zero': 0, 'one': 1, 'a': None, 'b': None}
+	in: [('a', None), ('b', None), ('one', 1), ('v', None), ('zero', 0)]
+	out: [('a', None), ('b', None), ('one', 1), ('v', None), ('zero', 0)]

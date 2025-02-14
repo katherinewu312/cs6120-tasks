@@ -6,6 +6,7 @@ import sys
 from copy import deepcopy
 from typing import List, Dict, Optional, Tuple
 from cfg import build_cfg, form_basic_blocks
+from util import sorted_output
 from functools import reduce
 
 import unittest
@@ -240,5 +241,5 @@ if __name__ == "__main__":
                     print(blocks[i][0].get("label", f"b{i}"))
                 else:
                     print(f"b{i}")
-                print(f"\tin: {block_in[i]}")
-                print(f"\tout: {block_out[i]}")
+                print(f"\tin: {sorted_output(block_in[i])}")
+                print(f"\tout: {sorted_output(block_out[i])}")
