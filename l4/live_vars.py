@@ -2,6 +2,7 @@ import json
 import sys
 
 from cfg import build_cfg, form_basic_blocks
+from util import sorted_output
 
 
 def live_vars_merge(sets: list[set]) -> set:
@@ -67,5 +68,5 @@ if __name__ == "__main__":
                 print(bbs[i][0].get("label", f"b{i}"))
             else:
                 print(f"b{i}")
-            print(f"\tin: {sorted(b_in[i])}")
-            print(f"\tout: {sorted(b_out[i])}")
+            print(f"\tin: {sorted_output(b_in[i])}")
+            print(f"\tout: {sorted_output(b_out[i])}")
