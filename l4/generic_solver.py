@@ -29,22 +29,28 @@ def dataflow(basic_blocks: list[list[dict]], _cfg: dict, analysis: Analysis):
         block_in : dict[int, set[str]] = {0 : analysis.init}
         block_out : dict[int, set[str]] = {b: analysis.init for b in range(len(basic_blocks) + 1)}
     else:
-        # Reverse the definitions
+        # Imagine them as reversed
         cfg, pred_cfg = _pred_cfg, _cfg
         block_in : dict[int, set[str]] = {len(basic_blocks): analysis.init}
         block_out: dict[int, set[str]] = {b: analysis.init for b in range(len(basic_blocks) + 1)}
     
     # Iterate through the basic blocks list
-    worklist = set(range(len(basic_blocks)))
+    worklist = set(range(len(basic_blocks)+1))
     while worklist:
         i = worklist.pop()
         block_in[i] = analysis.merge([block_out[s] for s in pred_cfg[i]])
         orig_block_out = block_out[i]
-        block_out[i] = analysis.transfer(basic_blocks[i], block_in[i])
+        if i < len(basic_blocks):
+            block_out[i] = analysis.transfer(basic_blocks[i], block_in[i])
+        else:
+            block_out[i] = block_in[i]
         if block_out[i] != orig_block_out:
-            worklist.union(set(cfg[i]))
-    
-    return block_in, block_out
+            worklist.update(set(cfg[i]))
+
+    if analysis.forward:
+        return block_in, block_out
+    else:
+        return block_out, block_in
 
 
 DF_EXAMPLES = {
@@ -54,7 +60,7 @@ DF_EXAMPLES = {
         merge=live_vars_merge,
         transfer=live_vars_transfer
     ),
-
+    
     "const": Analysis(
         forward=True,
         init=dict(),
@@ -62,6 +68,7 @@ DF_EXAMPLES = {
         transfer=const_prop_transfer
     )
 }
+
 
 if __name__ == "__main__":
     program = json.load(sys.stdin)
