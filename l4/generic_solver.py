@@ -6,6 +6,7 @@ from cfg import build_cfg, form_basic_blocks
 
 from live_vars import live_vars_transfer, live_vars_merge
 from const_prop import const_prop_transfer, const_prop_merge
+from util import sorted_output
 
 # Implemention of a generic solver that supports multiple analyses
 
@@ -82,5 +83,5 @@ if __name__ == "__main__":
                 print(basic_blocks[i][0].get("label", f"b{i}"))
             else:
                 print(f"b{i}")
-            print(f"\tin: {sorted(b_in[i])}")
-            print(f"\tout: {sorted(b_out[i])}")
+            print(f"\tin: {sorted_output(b_in[i])}")
+            print(f"\tout: {sorted_output(b_out[i])}")
