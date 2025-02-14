@@ -18,10 +18,7 @@ For constant propagation, the trickiest part was getting the merge function righ
 From our discussion in class, we know that the merge function for constant propagation
 should take the "union" of all dictionaries within a list of dicts (where each dict maps a variable name to its constant value, or `None` if it is unknown). Initially, we tried using 
 Python's default dictionary union operator `d1 | d2`. However, we found out this doesn't
-work when the same key `var` is defined in both dicts and `d1[var] != d2[var]`, 
-since the Python operator automatically picks `d2[var]` due to how it is defined.
-As a result, we had to hand-roll our own dictionary union function so that 
-`var` is always mapped to `None` in the case above. To gain confidence in our constant propagation implementation, we used property-based random testing (using Python's [Hypothesis](https://hypothesis.readthedocs.io/en/latest/) library) to check that our implementaiton satisfies various equational properties (e.g. the output dict from the merge function should preserve all keys from the argument dicts). We also set up separate Turnt environments for our different analyses and manually compared our results to [the example dataflow tests in the Bril repo](https://github.com/sampsyo/bril/tree/main/examples/test/df) to make sure our analysis works for a selection of Bril programs. 
+work when the same key `var` is defined in both dicts and `d1[var] != d2[var]` -- the Python `|` operator automatically picks `d2[var]` in this situation, which isn't what we want. As a result, we had to hand-roll our own dictionary union function so that `var` is always mapped to `None` in the case above. To gain confidence in our constant propagation implementation, we used property-based random testing (using Python's [Hypothesis](https://hypothesis.readthedocs.io/en/latest/) library) to check that our implementation satisfies various equational properties (e.g. the output dict from the merge function should preserve all keys from the argument dicts). We also set up separate Turnt environments for our different analyses and manually compared our results to [the example dataflow tests in the Bril repo](https://github.com/sampsyo/bril/tree/main/examples/test/df) to make sure our analysis works for a selection of Bril programs. 
 
 We also decided to implement a generic solver that supports multiple analyses. Our code follows the high-level 
 pseudocode that was mentioned in the lesson. We tried to think of a way to write both the forward and backward data 
@@ -31,9 +28,9 @@ block_out and vice versa for the backward pass. Although this did not introduce 
 to some confusion in reading the code itself at times. Additionally, we made sure to define a dataclass called 
 Analysis to distinguish between forward/backward passes, initial values, merge functions, and transfer functions. 
 Thus, specifying a new data flow analysis simply amounted to assigning values to these variables forward, init, 
-merge, and transfer. We tested our generic solver using turnt, using the bril examples located in the test directory.
-We tested the generic solver by setting up turnt environments that ran the generic solver configured for live 
+merge, and transfer. We tested our generic solver using Turnt, using the Bril examples located in the test directory.
+We tested the generic solver by setting up Turnt environments that ran the generic solver configured for live 
 variables / constant propagation and checking that these runs matched the outputs of the respective standalone 
 implementations. We think we deserve a Michelin star because we implemented multiple data flow analyses and tested 
-these thoroughly using turnt before abstracting both implementations into a generic solver while verifying that 
+these thoroughly using Turnt before abstracting both implementations into a generic solver while verifying that 
 correctness was maintained.
