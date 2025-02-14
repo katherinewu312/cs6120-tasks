@@ -1,12 +1,14 @@
+main
 b0
 	in: {}
 	out: {'a': 2, 'b': 4, 'c': None}
 b1
-	in: {}
-	out: {}
+	in: {'a': 2, 'b': 4, 'c': None}
+	out: {'a': 2, 'b': 4, 'c': None}
+add
 b0
 	in: {}
 	out: {'c': None}
 b1
-	in: {}
-	out: {}
+	in: {'c': None}
+	out: {'c': None}

@@ -1,3 +1,4 @@
+main
 b0
 	in: {}
 	out: {'v': 4}
@@ -8,5 +9,5 @@ somewhere
 	in: {'v': None}
 	out: {'v': None}
 b3
-	in: {}
-	out: {}
+	in: {'v': None}
+	out: {'v': None}

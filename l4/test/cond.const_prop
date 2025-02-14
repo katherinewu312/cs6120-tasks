@@ -1,3 +1,4 @@
+main
 b0
 	in: {}
 	out: {'a': 47, 'b': 42, 'cond': True}
@@ -11,5 +12,5 @@ end
 	in: {'a': None, 'b': None, 'cond': True, 'c': None}
 	out: {'a': None, 'b': None, 'cond': True, 'c': None, 'd': None}
 b4
-	in: {}
-	out: {}
+	in: {'a': None, 'b': None, 'cond': True, 'c': None, 'd': None}
+	out: {'a': None, 'b': None, 'cond': True, 'c': None, 'd': None}

@@ -1,3 +1,4 @@
+main
 b0
 	in: {}
 	out: {'v1': 1, 'index': None}
@@ -38,5 +39,5 @@ for.end.0
 	in: {'v1': 1, 'index': None, 'v2': None, 'v4': None, 'v5': None, 'v6': 3, 'v7': None, 'div3': None, 'v8': None, 'v9': 3, 'v10': None, 'v11': None, 'v12': None, 'isFizz': None, 'v13': None, 'v14': 5, 'v15': None, 'div5': None, 'v16': None, 'v17': 5, 'v18': None, 'v19': None, 'v20': None, 'isBuzz': None, 'v22': None, 'v24': None, 'v25': 0, 'v26': 1, 'v27': None, 'v28': 0, 'v29': 0, 'v30': 2, 'v31': None, 'v32': 0, 'v34': None, 'v35': 0, 'v36': 3, 'v37': None, 'v38': 0, 'v39': None, 'v40': 0, 'v41': None, 'v42': 1, 'v43': None}
 	out: {'v1': 1, 'index': None, 'v2': None, 'v4': None, 'v5': None, 'v6': 3, 'v7': None, 'div3': None, 'v8': None, 'v9': 3, 'v10': None, 'v11': None, 'v12': None, 'isFizz': None, 'v13': None, 'v14': 5, 'v15': None, 'div5': None, 'v16': None, 'v17': 5, 'v18': None, 'v19': None, 'v20': None, 'isBuzz': None, 'v22': None, 'v24': None, 'v25': 0, 'v26': 1, 'v27': None, 'v28': 0, 'v29': 0, 'v30': 2, 'v31': None, 'v32': 0, 'v34': None, 'v35': 0, 'v36': 3, 'v37': None, 'v38': 0, 'v39': None, 'v40': 0, 'v41': None, 'v42': 1, 'v43': None}
 b13
-	in: {}
-	out: {}
+	in: {'v1': 1, 'index': None, 'v2': None, 'v4': None, 'v5': None, 'v6': 3, 'v7': None, 'div3': None, 'v8': None, 'v9': 3, 'v10': None, 'v11': None, 'v12': None, 'isFizz': None, 'v13': None, 'v14': 5, 'v15': None, 'div5': None, 'v16': None, 'v17': 5, 'v18': None, 'v19': None, 'v20': None, 'isBuzz': None, 'v22': None, 'v24': None, 'v25': 0, 'v26': 1, 'v27': None, 'v28': 0, 'v29': 0, 'v30': 2, 'v31': None, 'v32': 0, 'v34': None, 'v35': 0, 'v36': 3, 'v37': None, 'v38': 0, 'v39': None, 'v40': 0, 'v41': None, 'v42': 1, 'v43': None}
+	out: {'v1': 1, 'index': None, 'v2': None, 'v4': None, 'v5': None, 'v6': 3, 'v7': None, 'div3': None, 'v8': None, 'v9': 3, 'v10': None, 'v11': None, 'v12': None, 'isFizz': None, 'v13': None, 'v14': 5, 'v15': None, 'div5': None, 'v16': None, 'v17': 5, 'v18': None, 'v19': None, 'v20': None, 'isBuzz': None, 'v22': None, 'v24': None, 'v25': 0, 'v26': 1, 'v27': None, 'v28': 0, 'v29': 0, 'v30': 2, 'v31': None, 'v32': 0, 'v34': None, 'v35': 0, 'v36': 3, 'v37': None, 'v38': 0, 'v39': None, 'v40': 0, 'v41': None, 'v42': 1, 'v43': None}

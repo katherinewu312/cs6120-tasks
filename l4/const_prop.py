@@ -212,7 +212,7 @@ def const_prop(
             block_out[b_idx] = const_prop_transfer(blocks[b_idx], block_in[b_idx])
         else:
             # Handle fake last block
-            block_in[b_idx] = block_out[b_idx]
+            block_out[b_idx] = block_in[b_idx]
         if block_out[b_idx] != original_block_out:
             successors = cfg[b_idx]
             worklist.update(successors)
@@ -234,6 +234,7 @@ if __name__ == "__main__":
             blocks = form_basic_blocks(func)
             cfg = build_cfg(blocks)
             block_in, block_out = const_prop(blocks, cfg)
+            print(func["name"])
             for i in range(len(blocks) + 1):
                 if i < len(blocks):
                     print(blocks[i][0].get("label", f"b{i}"))

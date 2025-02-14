@@ -1,6 +1,7 @@
+main
 b0
 	in: {}
 	out: {'v0': 1, 'v1': 2, 'v2': None}
 b1
-	in: {}
-	out: {}
+	in: {'v0': 1, 'v1': 2, 'v2': None}
+	out: {'v0': 1, 'v1': 2, 'v2': None}

@@ -1,3 +1,4 @@
+main
 b0
 	in: {}
 	out: {'v': 4, 'zero': 0, 'one': 1, 'a': 10}
@@ -8,5 +9,5 @@ end
 	in: {'v': None, 'zero': 0, 'one': 1, 'a': None, 'b': None}
 	out: {'v': None, 'zero': 0, 'one': 1, 'a': None, 'b': None}
 b3
-	in: {}
-	out: {}
+	in: {'v': None, 'zero': 0, 'one': 1, 'a': None, 'b': None}
+	out: {'v': None, 'zero': 0, 'one': 1, 'a': None, 'b': None}
