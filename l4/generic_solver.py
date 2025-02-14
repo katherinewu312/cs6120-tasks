@@ -82,5 +82,5 @@ if __name__ == "__main__":
                 print(basic_blocks[i][0].get("label", f"b{i}"))
             else:
                 print(f"b{i}")
-            print(f"\tin: {b_in[i]}")
-            print(f"\tout: {b_out[i]}")
+            print(f"\tin: {sorted(b_in[i])}")
+            print(f"\tout: {sorted(b_out[i])}")
