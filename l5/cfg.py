@@ -27,6 +27,7 @@ def form_basic_blocks(func):
         
     return basic_blocks
 
+
 def build_cfg(basic_blocks):
     label_to_block = dict()
     for i, basic_block in enumerate(basic_blocks):
@@ -51,7 +52,17 @@ def build_cfg(basic_blocks):
 
     cfg[len(basic_blocks)] = []
     return cfg
-                
+
+
+def get_pred_cfg(cfg):
+    """Reverse cfg to obtain predecessor maps"""
+    pred_cfg = {i: [] for i in range(len(cfg.keys()))}
+    for k, v in cfg.items():
+        for i in v:
+            pred_cfg[i].append(k)
+    return pred_cfg
+
+
 def cfg():
     program = json.load(sys.stdin)
     
