@@ -49,7 +49,7 @@ def get_immediate_dominators(cfg: CFG) -> Dict[Idx, Set[Idx]]:
 def get_dominance_frontier(cfg: CFG):
     """Computes the dominance frontier for every node in a CFG."""
 
-    # Dominator map (maps each node index -> set of blocks that dominate node)
+    # Dominator map (maps each `v` -> set of blocks that dominate node `v`)
     doms: Dict[Idx, Set[Idx]] = get_dominators(cfg)
 
     # Dominator tree
@@ -61,15 +61,22 @@ def get_dominance_frontier(cfg: CFG):
     # Dominance frontier
     df: Dict[Idx, Set[Idx]] = {v: set() for v in cfg}
 
+    # ------------------------- Some helper functions ------------------------ #
+
+    def dominates(x: Idx, y: Idx) -> bool:
+        """`dominates(x, y)` indicates whether `x` dominates `y`"""
+        return (x in doms[y])
+
     def idom(x: Idx, y: Idx) -> bool:
-        """Helper function:
-        `idom(x, y)` indicates whether `x` *immediately* dominates `y`"""
-        return y in imm_doms[x]
+        """`idom(x, y)` indicates whether `x` *immediately* dominates `y`"""
+        return (y in imm_doms[x])
 
     def sdom(x: Idx, y: Idx) -> bool:
         """`sdom(x, y)` indicates whether `x` *strictly* dominates `y`"""
-        result = (x != y) and (y in doms[x])
+        result = (x != y) and dominates(x, y)
         return result
+    
+    # ---------------------- Populate dominance frontier --------------------- #
 
     for x, succs in cfg.items():
         for y in succs:
