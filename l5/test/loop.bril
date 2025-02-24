@@ -1,0 +1,21 @@
+@main {
+  v: int = const 4;
+  zero: int = const 0;
+  one: int = const 1;
+  a: int = const 10;
+  c: int = const 11;
+.loop:
+  b: bool = eq v zero;
+  br b .exit .body;
+.body:
+  v: int = sub v one;
+  a: int = add a one;
+  b: bool = eq a c;
+  br b .then .endif;
+.then:
+  v: int = add v one;
+.endif:
+  jmp .loop;
+.exit:
+  print a;
+}
