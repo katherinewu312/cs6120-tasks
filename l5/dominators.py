@@ -26,6 +26,27 @@ def get_dominators(cfg: dict[int, list[int]]) -> dict[int, set[int]]:
 
     return dom
 
+
+def get_all_paths(cfg, src, dest, path):
+    """Enumerates all paths from `src` to `dest` in the `cfg`
+    - `path` is the path that has been traversed so far 
+    """
+
+    path = path + [src]
+    if src == dest:
+        return [path]
+    if src not in cfg.keys():
+        return []
+    paths = []
+    for neighbor in cfg[src]:
+        if neighbor not in path:
+            newpaths = get_all_paths(cfg, neighbor, dest, path)
+            for newpath in newpaths:
+                if path not in paths:
+                    paths.append(newpath)
+    return paths    
+
+
 if __name__ == "__main__":
     program = json.load(sys.stdin)
     for func in program["functions"]:

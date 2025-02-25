@@ -76,6 +76,27 @@ def get_dominance_frontier(cfg: CFG):
     return df
 
 
+def get_all_paths(cfg: CFG, src: Idx, dest: Idx, path: List[Idx]):
+    """Enumerates all paths from `src` to `dest` in the `cfg`
+    - `path` is the path that has been traversed so far 
+    """
+
+    path = path + [src]
+    if src == dest:
+        return [path]
+    if src not in cfg.keys():
+        return []
+    paths = []
+    for neighbor in cfg[src]:
+        if neighbor not in path:
+            newpaths = get_all_paths(cfg, neighbor, dest, path)
+            for newpath in newpaths:
+                if path not in paths:
+                    paths.append(newpath)
+    return paths       
+
+
+
 class TestDominanceFrontier(unittest.TestCase):
     # Dominance Frontier example from CS 4120 lecture notes
     # https://www.cs.cornell.edu/courses/cs4120/2023sp/notes.html?id=reachdef
@@ -165,6 +186,8 @@ class TestDominanceFrontier(unittest.TestCase):
         actual_df = get_dominance_frontier(cfg)
         self.assertDictEqual(actual_df, expected_df)
 
+        
+
 
 if __name__ == "__main__":
     # Set up an optional cmd-line argument `--test` that runs the test suite
@@ -173,7 +196,29 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.test:
-        unittest.main(argv=["first-arg-is-ignored"])
+        # unittest.main(argv=["first-arg-is-ignored"])
+        
+        
+        nodes = list(range(9))
+
+        cfg = {v: [] for v in nodes}
+        cfg[1] = [2]
+        cfg[2] = [3, 4]
+        cfg[3] = [5]
+        cfg[4] = [6]
+        cfg[5] = [3, 6]
+        cfg[6] = [2, 7]
+
+        # Dummy initial block
+        cfg[0] = [1]
+
+        # Dummy final block
+        cfg[7] = [8]
+        cfg[8] = []
+
+        for i in nodes:
+            paths = get_all_paths(cfg, 0, i, [])
+            print(f'paths from 0 to {i} = {paths}')
     else:
         program = json.load(sys.stdin)
         for func in program["functions"]:
