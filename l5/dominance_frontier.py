@@ -38,8 +38,19 @@ type CFG = Dict[Idx, List[Idx]]
 #                            Dominance frontier code                           #
 # ---------------------------------------------------------------------------- #
 
+def dominates(doms, x: Idx, y: Idx) -> bool:
+    """`dominates(x, y)` indicates whether `x` dominates `y` in the 
+        dominance map `doms`"""
+    return x in doms[y]
 
-def get_dominance_frontier(cfg: CFG):
+def strictly_dominates(doms, x: Idx, y: Idx) -> bool:
+    """`strictly_dominates(x, y)` indicates
+    whether `x` *strictly* dominates `y` according to the dominance map `doms`"""
+    result = (x != y) and dominates(doms, x, y)
+    return result
+
+
+def get_dominance_frontier(cfg: CFG) -> Dict[Idx, Set[Idx]]:
     """Computes the dominance frontier for every node in a CFG."""
 
     # Predecessors
@@ -49,16 +60,6 @@ def get_dominance_frontier(cfg: CFG):
     doms: Dict[Idx, Set[Idx]] = get_dominators(cfg)
 
     # ------------------------- Some helper functions ------------------------ #
-
-    def dominates(x: Idx, y: Idx) -> bool:
-        """`dominates(x, y)` indicates whether `x` dominates `y`"""
-        return x in doms[y]
-
-    def strictly_dominates(x: Idx, y: Idx) -> bool:
-        """`strictly_dominates(x, y)` indicates
-        whether `x` *strictly* dominates `y`"""
-        result = (x != y) and dominates(x, y)
-        return result
 
     # ---------------------- Populate dominance frontier --------------------- #
 
@@ -71,15 +72,34 @@ def get_dominance_frontier(cfg: CFG):
         df[a] = {
             b
             for b in cfg.keys()
-            if (not strictly_dominates(a, b))
-            and any(dominates(a, pred) for pred in preds[b])
+            if (not strictly_dominates(doms, a, b))
+            and any(dominates(doms, a, pred) for pred in preds[b])
         }
 
     return df
 
 
+# ---------------------------------------------------------------------------- #
+#                                     Tests                                    #
+# ---------------------------------------------------------------------------- #
+# Checks whether the dominance frontier has been computed accurately
+# TODO: double check whether the unit tests below pass w/ this function
+def check_dominance_frontier(doms, df, preds) -> bool:
+    result = True
+    for a, bs in df.items():
+        for b in bs:
+            # Check that for each B in A's dominance frontier,
+            # A does not dominate B
+            if dominates(doms, a, b):
+                result = False 
+                continue 
+            # Check that A dominates some predecessor of B 
+            # for each B in A's dominance frontier  
+            if not any(dominates(doms, a, pred) for pred in preds[b]):
+                result = False 
 
-
+    return result 
+            
 class TestDominanceFrontier(unittest.TestCase):
     def test_dom_frontiers_cs4120_example(self):
         cfg = cs4120_example()
@@ -93,8 +113,12 @@ class TestDominanceFrontier(unittest.TestCase):
         expected_df[7] = {8}
         expected_df[8] = {9}
 
-        actual_df = get_dominance_frontier(cfg)
-        self.assertDictEqual(actual_df, expected_df)
+        df = get_dominance_frontier(cfg)
+        self.assertDictEqual(df, expected_df)
+
+        doms = get_dominators(cfg)
+        preds = get_pred_cfg(cfg)
+        self.assertTrue(check_dominance_frontier(doms, df, preds))
 
     def test_dom_frontiers_princeton_example(self):
         cfg = princeton_cfg()
@@ -105,8 +129,13 @@ class TestDominanceFrontier(unittest.TestCase):
         expected_df[5] = {3, 6}
         expected_df[6] = {2}
 
-        actual_df = get_dominance_frontier(cfg)
-        self.assertDictEqual(actual_df, expected_df)
+        df = get_dominance_frontier(cfg)
+        self.assertDictEqual(df, expected_df)
+        
+        doms = get_dominators(cfg)
+        preds = get_pred_cfg(cfg)
+        self.assertTrue(check_dominance_frontier(doms, df, preds))
+
 
 
 if __name__ == "__main__":
@@ -123,5 +152,6 @@ if __name__ == "__main__":
             bbs: List[Block] = form_basic_blocks(func)
             cfg: CFG = build_cfg(bbs)
             print(func["name"])
+            doms = get_dominators(cfg)
             df = get_dominance_frontier(cfg)
             print(df)
