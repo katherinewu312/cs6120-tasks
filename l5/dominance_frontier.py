@@ -83,14 +83,13 @@ def get_dominance_frontier(cfg: CFG) -> Dict[Idx, Set[Idx]]:
 #                                     Tests                                    #
 # ---------------------------------------------------------------------------- #
 # Checks whether the dominance frontier has been computed accurately
-# TODO: double check whether the unit tests below pass w/ this function
-def check_dominance_frontier(doms, df, preds) -> bool:
+def df_well_formed(doms, df, preds) -> bool:
     result = True
     for a, bs in df.items():
         for b in bs:
             # Check that for each B in A's dominance frontier,
-            # A does not dominate B
-            if dominates(doms, a, b):
+            # A does not strictly dominate B
+            if strictly_dominates(doms, a, b):
                 result = False 
                 continue 
             # Check that A dominates some predecessor of B 
@@ -118,7 +117,7 @@ class TestDominanceFrontier(unittest.TestCase):
 
         doms = get_dominators(cfg)
         preds = get_pred_cfg(cfg)
-        self.assertTrue(check_dominance_frontier(doms, df, preds))
+        self.assertTrue(df_well_formed(doms, df, preds))
 
     def test_dom_frontiers_princeton_example(self):
         cfg = princeton_cfg()
@@ -134,7 +133,8 @@ class TestDominanceFrontier(unittest.TestCase):
         
         doms = get_dominators(cfg)
         preds = get_pred_cfg(cfg)
-        self.assertTrue(check_dominance_frontier(doms, df, preds))
+        
+        self.assertTrue(df_well_formed(doms, df, preds))
 
 
 
