@@ -3,30 +3,25 @@
 #                              Some example CFGs                               #
 # ---------------------------------------------------------------------------- #
 
-# Dominance Frontier example from CS 4120 lecture notes
-    # https://www.cs.cornell.edu/courses/cs4120/2023sp/notes.html?id=reachdef
-    #
-    #
-    #                    (7)
-    #                     |
-    #                     v
-    #    (1)------------>(8)
-    #    / \
-    #   /   \
-    #  v     v
-    # (2)   (3)
-    #  \     /
-    #   \   /
-    #    v v
-    #    (4)
-    #     |
-    #     v
-    #    (5)<---(6)
-    #
-    # - DF[1] = {5, 8}
-    # - DF[2] = {2}
-    # - DF[3] = {2}
-    # - DF[4] = {5}
+# CFG example from CS 4120 lecture notes
+# https://www.cs.cornell.edu/courses/cs4120/2023sp/notes.html?id=reachdef
+#
+#                    (7)
+#                     |
+#                     v
+#    (1)------------>(8)
+#    / \
+#   /   \
+#  v     v
+# (2)   (3)
+#  \     /
+#   \   /
+#    v v
+#    (4)
+#     |
+#     v
+#    (5)<---(6)
+# 
 def cs4120_example():
     nodes = list(range(10))
     cfg = {v: [] for v in nodes}
@@ -50,8 +45,23 @@ def cs4120_example():
     return cfg
 
 
-# Dominance frontier example taken from Princeton COS 320 slides
+# CFG example taken from Princeton COS 320 slides
 # https://www.cs.princeton.edu/courses/archive/spring22/cos320/lectures/ssa.pdf
+# 
+#        1
+#        |
+#        v
+#        2
+#       / \
+#      v   v
+#     3     4
+#    ^ \    |
+#    |  v   |
+#    5-->6<-'
+#        |
+#        v
+#        7
+# 
 def princeton_cfg():
     nodes = list(range(9))
 
