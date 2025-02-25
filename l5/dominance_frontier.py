@@ -11,7 +11,6 @@ from dominators import get_dominators
 from typing import List, Dict, Set
 
 
-
 # ---------------------------------------------------------------------------- #
 #                   Some type aliases to improve readibility                   #
 # ---------------------------------------------------------------------------- #
@@ -38,10 +37,12 @@ type CFG = Dict[Idx, List[Idx]]
 #                            Dominance frontier code                           #
 # ---------------------------------------------------------------------------- #
 
+
 def dominates(doms, x: Idx, y: Idx) -> bool:
-    """`dominates(x, y)` indicates whether `x` dominates `y` in the 
-        dominance map `doms`"""
+    """`dominates(x, y)` indicates whether `x` dominates `y` in the
+    dominance map `doms`"""
     return x in doms[y]
+
 
 def strictly_dominates(doms, x: Idx, y: Idx) -> bool:
     """`strictly_dominates(x, y)` indicates
@@ -90,15 +91,16 @@ def df_well_formed(doms, df, preds) -> bool:
             # Check that for each B in A's dominance frontier,
             # A does not strictly dominate B
             if strictly_dominates(doms, a, b):
-                result = False 
-                continue 
-            # Check that A dominates some predecessor of B 
-            # for each B in A's dominance frontier  
+                result = False
+                continue
+            # Check that A dominates some predecessor of B
+            # for each B in A's dominance frontier
             if not any(dominates(doms, a, pred) for pred in preds[b]):
-                result = False 
+                result = False
 
-    return result 
-            
+    return result
+
+
 class TestDominanceFrontier(unittest.TestCase):
     def test_dom_frontiers_cs4120_example(self):
         cfg = cs4120_example()
@@ -130,12 +132,19 @@ class TestDominanceFrontier(unittest.TestCase):
 
         df = get_dominance_frontier(cfg)
         self.assertDictEqual(df, expected_df)
-        
+
         doms = get_dominators(cfg)
         preds = get_pred_cfg(cfg)
-        
+
         self.assertTrue(df_well_formed(doms, df, preds))
 
+
+def post_process_df(df):
+    """Converts sets to sorted lists in the values of the dominance frontier
+    (for the sake of consistent formatting)"""
+
+    new_df = {k: sorted(list(v)) for (k, v) in df.items()}
+    return new_df
 
 
 if __name__ == "__main__":
@@ -154,4 +163,5 @@ if __name__ == "__main__":
             print(func["name"])
             doms = get_dominators(cfg)
             df = get_dominance_frontier(cfg)
-            print(df)
+            new_df = post_process_df(df)
+            print(json.dumps(new_df, indent=2, sort_keys=True))
