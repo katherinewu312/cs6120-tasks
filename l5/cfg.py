@@ -63,13 +63,49 @@ def get_pred_cfg(cfg):
     return pred_cfg
 
 
+def flatten(xss):
+    return [x for xs in xss for x in xs]
+
+def fresh(seed, names):
+    i = 1
+    while True:
+        name = seed + str(i)
+        if name not in names:
+            return name
+        i += 1
+
+def add_entry_block(basic_blocks):
+    """Ensures the list of basic blocks has a unique entry block with no predecessors,
+    Returns a list of potentially modified basic blocks"""
+    
+    # if first block has no predecessors, return original list of basic blocks
+    first_block = basic_blocks[0]
+    if not any('label' in d for d in first_block):
+        # if first block doesn't have a label, it cannot possibly have a predecessor as it cannot be referred back to
+        return basic_blocks
+    else:
+        # check for any references to this label
+        label = first_block[0]['label']
+        for instr in flatten(basic_blocks):
+            if 'labels' in instr and label in instr['labels']:
+                break
+        else:
+            return basic_blocks
+    
+    # if first block has predecessors, add a new block before the original first block
+    new_entry_block = [{'label': fresh('entry', basic_blocks)}]
+    basic_blocks.insert(0,new_entry_block)
+    return basic_blocks
+
+
 def cfg():
     program = json.load(sys.stdin)
     
     # Prints the basic blocks in the program
     print('BASIC BLOCKS: ')
     for func in program["functions"]:
-        for block in form_basic_blocks(func):
+        basic_blocks = form_basic_blocks(func)
+        for block in basic_blocks:
             print(block)
     
     # Prints the CFG 

@@ -1,7 +1,7 @@
 import json
 import sys
 
-from cfg import form_basic_blocks, build_cfg
+from cfg import form_basic_blocks, build_cfg, add_entry_block
 from dominators import get_dominators
 
 # Implemention for constructing a dominance tree for a given CFG
@@ -23,6 +23,7 @@ if __name__ == "__main__":
     program = json.load(sys.stdin)
     for func in program["functions"]:
         basic_blocks = form_basic_blocks(func)
+        basic_blocks = add_entry_block(basic_blocks)
         cfg = build_cfg(basic_blocks)
         print(func["name"])
         doms = get_dominators(cfg)

@@ -1,7 +1,7 @@
 import json
 import sys
 
-from cfg import form_basic_blocks, build_cfg, get_pred_cfg
+from cfg import form_basic_blocks, build_cfg, get_pred_cfg, add_entry_block
 from dfs import get_all_paths
 
 
@@ -32,6 +32,7 @@ if __name__ == "__main__":
     program = json.load(sys.stdin)
     for func in program["functions"]:
         bbs = form_basic_blocks(func)
+        bbs = add_entry_block(bbs)
         c = build_cfg(bbs)
         print(func["name"])
         doms = get_dominators(c)
