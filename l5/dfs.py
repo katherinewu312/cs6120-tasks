@@ -1,5 +1,5 @@
 import unittest 
-from dominance_frontier import cs4120_example, princeton_cfg
+from cfg_examples import cs4120_example, princeton_cfg
 
 
 def get_all_paths(cfg, src, dest, path):

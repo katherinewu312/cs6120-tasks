@@ -2,6 +2,8 @@ import json
 import sys
 
 from cfg import form_basic_blocks, build_cfg, get_pred_cfg
+from dfs import get_all_paths
+
 
 def get_dominators(cfg: dict[int, list[int]]) -> dict[int, set[int]]:
     """Computes dominators for a CFG and returns a mapping of block -> list of blocks that dominate that block"""
@@ -34,3 +36,11 @@ if __name__ == "__main__":
         print(func["name"])
         doms = get_dominators(c)
         print(doms)
+        
+        # Use DFS to find all paths from entry and compare to dominators
+        for k,v in doms.items():
+            paths = get_all_paths(c, 0, k, [])
+            dfs_doms = set(paths[0])
+            for p in paths[1:]:
+                dfs_doms = dfs_doms.intersection(p)
+            assert set(v) == dfs_doms
