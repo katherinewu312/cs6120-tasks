@@ -135,6 +135,36 @@ class TestDominanceFrontier(unittest.TestCase):
         actual_df = get_dominance_frontier(cfg)
         self.assertDictEqual(actual_df, expected_df)
 
+    # Dominance frontier example taken from Princeton COS 320 slides 
+    # https://www.cs.princeton.edu/courses/archive/spring22/cos320/lectures/ssa.pdf    
+    def test_princeton_example(self):
+        nodes = list(range(9))
+
+        cfg = {v: [] for v in nodes}
+        cfg[1] = [2]
+        cfg[2] = [3, 4]
+        cfg[3] = [5]
+        cfg[4] = [6]
+        cfg[5] = [3, 6]
+        cfg[6] = [2, 7]
+
+        # Dummy initial block
+        cfg[0] = [1]
+
+        # Dummy final block
+        cfg[7] = [8]
+        cfg[8] = []
+
+        expected_df = {v: set() for v in nodes}
+        expected_df[2] = {2}
+        expected_df[3] = {3, 6}
+        expected_df[4] = {6}
+        expected_df[5] = {3, 6}
+        expected_df[6] = {2}
+
+        actual_df = get_dominance_frontier(cfg)
+        self.assertDictEqual(actual_df, expected_df)
+
 
 if __name__ == "__main__":
     # Set up an optional cmd-line argument `--test` that runs the test suite
