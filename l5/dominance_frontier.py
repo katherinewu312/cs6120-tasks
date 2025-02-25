@@ -76,25 +76,54 @@ def get_dominance_frontier(cfg: CFG):
     return df
 
 
-def get_all_paths(cfg: CFG, src: Idx, dest: Idx, path: List[Idx]):
-    """Enumerates all paths from `src` to `dest` in the `cfg`
-    - `path` is the path that has been traversed so far 
-    """
+# ---------------------------------------------------------------------------- #
+#                              Some example graphs                             #
+# ---------------------------------------------------------------------------- #
 
-    path = path + [src]
-    if src == dest:
-        return [path]
-    if src not in cfg.keys():
-        return []
-    paths = []
-    for neighbor in cfg[src]:
-        if neighbor not in path:
-            newpaths = get_all_paths(cfg, neighbor, dest, path)
-            for newpath in newpaths:
-                if path not in paths:
-                    paths.append(newpath)
-    return paths       
 
+def cs4120_example() -> CFG:
+    nodes = list(range(10))
+    cfg: CFG = {v: [] for v in nodes}
+    cfg[1] = [2, 3, 8]
+    cfg[2] = [4]
+    cfg[3] = [4]
+    cfg[4] = [5]
+    cfg[6] = [5]
+    cfg[7] = [8]
+
+    # 0 is a dummy initial block whose successors are all the "real"
+    # entry blocks in the CFG
+    cfg[0] = [1, 6, 7]
+
+    # 9 is dummy final block whose predecessors are all the "real"
+    # final blocks in the CFG
+    cfg[5] = [9]
+    cfg[8] = [9]
+    cfg[9] = []
+
+    return cfg
+
+
+# Dominance frontier example taken from Princeton COS 320 slides
+# https://www.cs.princeton.edu/courses/archive/spring22/cos320/lectures/ssa.pdf
+def princeton_cfg() -> CFG:
+    nodes = list(range(9))
+
+    cfg: CFG = {v: [] for v in nodes}
+    cfg[1] = [2]
+    cfg[2] = [3, 4]
+    cfg[3] = [5]
+    cfg[4] = [6]
+    cfg[5] = [3, 6]
+    cfg[6] = [2, 7]
+
+    # Dummy initial block
+    cfg[0] = [1]
+
+    # Dummy final block
+    cfg[7] = [8]
+    cfg[8] = []
+    return cfg
 
 
 class TestDominanceFrontier(unittest.TestCase):
@@ -122,28 +151,9 @@ class TestDominanceFrontier(unittest.TestCase):
     # - DF[2] = {2}
     # - DF[3] = {2}
     # - DF[4] = {5}
-    def test_cs4120_example(self):
-        nodes = list(range(10))
-
-        cfg = {v: [] for v in nodes}
-        cfg[1] = [2, 3, 8]
-        cfg[2] = [4]
-        cfg[3] = [4]
-        cfg[4] = [5]
-        cfg[6] = [5]
-        cfg[7] = [8]
-
-        # 0 is a dummy initial block whose successors are all the "real"
-        # entry blocks in the CFG
-        cfg[0] = [1, 6, 7]
-
-        # 9 is dummy final block whose predecessors are all the "real"
-        # final blocks in the CFG
-        cfg[5] = [9]
-        cfg[8] = [9]
-        cfg[9] = []
-
-        expected_df = {v: set() for v in nodes}
+    def test_dom_frontiers_cs4120_example(self):
+        cfg = cs4120_example()
+        expected_df = {v: set() for v in cfg.keys()}
         expected_df[1] = {5, 8}
         expected_df[2] = {4}
         expected_df[3] = {4}
@@ -156,27 +166,9 @@ class TestDominanceFrontier(unittest.TestCase):
         actual_df = get_dominance_frontier(cfg)
         self.assertDictEqual(actual_df, expected_df)
 
-    # Dominance frontier example taken from Princeton COS 320 slides 
-    # https://www.cs.princeton.edu/courses/archive/spring22/cos320/lectures/ssa.pdf    
-    def test_princeton_example(self):
-        nodes = list(range(9))
-
-        cfg = {v: [] for v in nodes}
-        cfg[1] = [2]
-        cfg[2] = [3, 4]
-        cfg[3] = [5]
-        cfg[4] = [6]
-        cfg[5] = [3, 6]
-        cfg[6] = [2, 7]
-
-        # Dummy initial block
-        cfg[0] = [1]
-
-        # Dummy final block
-        cfg[7] = [8]
-        cfg[8] = []
-
-        expected_df = {v: set() for v in nodes}
+    def test_dom_frontiers_princeton_example(self):
+        cfg = princeton_cfg()
+        expected_df = {v: set() for v in cfg.keys()}
         expected_df[2] = {2}
         expected_df[3] = {3, 6}
         expected_df[4] = {6}
@@ -186,8 +178,6 @@ class TestDominanceFrontier(unittest.TestCase):
         actual_df = get_dominance_frontier(cfg)
         self.assertDictEqual(actual_df, expected_df)
 
-        
-
 
 if __name__ == "__main__":
     # Set up an optional cmd-line argument `--test` that runs the test suite
@@ -196,29 +186,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.test:
-        # unittest.main(argv=["first-arg-is-ignored"])
-        
-        
-        nodes = list(range(9))
-
-        cfg = {v: [] for v in nodes}
-        cfg[1] = [2]
-        cfg[2] = [3, 4]
-        cfg[3] = [5]
-        cfg[4] = [6]
-        cfg[5] = [3, 6]
-        cfg[6] = [2, 7]
-
-        # Dummy initial block
-        cfg[0] = [1]
-
-        # Dummy final block
-        cfg[7] = [8]
-        cfg[8] = []
-
-        for i in nodes:
-            paths = get_all_paths(cfg, 0, i, [])
-            print(f'paths from 0 to {i} = {paths}')
+        unittest.main(argv=["first-arg-is-ignored"])
     else:
         program = json.load(sys.stdin)
         for func in program["functions"]:
