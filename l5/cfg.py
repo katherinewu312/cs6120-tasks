@@ -56,7 +56,7 @@ def build_cfg(basic_blocks):
 
 def get_pred_cfg(cfg):
     """Reverse cfg to obtain predecessor maps"""
-    pred_cfg = {i: [] for i in range(len(cfg.keys()))}
+    pred_cfg = {i: [] for i in cfg.keys()}
     for k, v in cfg.items():
         for i in v:
             pred_cfg[i].append(k)
