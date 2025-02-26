@@ -38,13 +38,18 @@ type CFG = Dict[Idx, List[Idx]]
 # ---------------------------------------------------------------------------- #
 
 
-def dominates(doms, x: Idx, y: Idx) -> bool:
+def dominates(doms: Dict[Idx, Set[Idx]], x: Idx, y: Idx) -> bool:
     """`dominates(x, y)` indicates whether `x` dominates `y` in the
-    dominance map `doms`"""
-    return x in doms[y]
+        dominance map `doms`.
+    - Note: not all blocks are present as keys in `doms`, since `get_dominators`
+      prunes unreachable blocks. To prevent the dict lookup operation from
+      failing, we use `dict.get`, which returns an empty set if the key
+      isn't in `doms`.
+    """
+    return x in doms.get(y, set())
 
 
-def strictly_dominates(doms, x: Idx, y: Idx) -> bool:
+def strictly_dominates(doms: Dict[Idx, Set[Idx]], x: Idx, y: Idx) -> bool:
     """`strictly_dominates(x, y)` indicates
     whether `x` *strictly* dominates `y` according to the dominance map `doms`"""
     result = (x != y) and dominates(doms, x, y)
