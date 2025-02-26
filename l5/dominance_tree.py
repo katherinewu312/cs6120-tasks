@@ -39,7 +39,7 @@ if __name__ == "__main__":
         if args.draw:
             names_map = map_to_block_name(basic_blocks)
             dot = Digraph()
-            for node, name in names_map.items():
+            for node, name in list(names_map.items())[:-1]: # don't include the very last block after exit in the graph
                 dot.node(str(node), label=name)
 
             for parent, children in dom_tree.items():
