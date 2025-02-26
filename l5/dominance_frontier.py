@@ -5,7 +5,7 @@ import json
 import unittest
 import sys
 
-from cfg import form_basic_blocks, build_cfg, get_pred_cfg
+from cfg import form_basic_blocks, build_cfg, get_pred_cfg, map_to_block_name
 from cfg_examples import cs4120_example, princeton_cfg
 from dominators import get_dominators
 from typing import List, Dict, Set
@@ -139,11 +139,15 @@ class TestDominanceFrontier(unittest.TestCase):
         self.assertTrue(df_well_formed(doms, df, preds))
 
 
-def post_process_df(df):
+def post_process_df(
+    df: Dict[Idx, Set[Idx]], name_map: Dict[Idx, str]
+) -> Dict[str, List[str]]:
     """Converts sets to sorted lists in the values of the dominance frontier
     (for the sake of consistent formatting)"""
 
-    new_df = {k: sorted(list(v)) for (k, v) in df.items()}
+    new_df = {
+        name_map[k]: sorted([name_map[v] for v in values]) for (k, values) in df.items()
+    }
     return new_df
 
 
@@ -159,9 +163,10 @@ if __name__ == "__main__":
         program = json.load(sys.stdin)
         for func in program["functions"]:
             bbs: List[Block] = form_basic_blocks(func)
+            name_map = map_to_block_name(bbs)
             cfg: CFG = build_cfg(bbs)
             print(func["name"])
             doms = get_dominators(cfg)
-            df = get_dominance_frontier(cfg)
-            new_df = post_process_df(df)
+            df: Dict[Idx, Set[Idx]] = get_dominance_frontier(cfg)
+            new_df = post_process_df(df, name_map)
             print(json.dumps(new_df, indent=2, sort_keys=True))

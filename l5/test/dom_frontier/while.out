@@ -1,11 +1,11 @@
 main
 {
-  "0": [
-    0
+  "final": [],
+  "while.body": [
+    "while.cond"
   ],
-  "1": [
-    0
+  "while.cond": [
+    "while.cond"
   ],
-  "2": [],
-  "3": []
+  "while.finish": []
 }
