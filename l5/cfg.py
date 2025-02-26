@@ -98,6 +98,19 @@ def add_entry_block(basic_blocks):
     return basic_blocks
 
 
+def map_to_block_name(basic_blocks):
+    """Produces a mapping from block number in cfg -> actual block name if one exists
+    If block name does not exist, generate a fresh name"""
+    name_map = dict()
+    for i,basic_block in enumerate(basic_blocks):
+        if not any('label' in d for d in basic_block):
+            name_map[i] = fresh('b', name_map.keys())
+        else:
+            name_map[i] = basic_block[0]['label']
+    name_map[len(basic_blocks)] = 'final'
+    return name_map
+
+
 def cfg():
     program = json.load(sys.stdin)
     

@@ -1,7 +1,9 @@
 import json
 import sys
+import argparse
+from graphviz import Digraph
 
-from cfg import form_basic_blocks, build_cfg, add_entry_block
+from cfg import form_basic_blocks, build_cfg, add_entry_block, map_to_block_name
 from dominators import get_dominators
 
 # Implemention for constructing a dominance tree for a given CFG
@@ -20,6 +22,10 @@ def get_dominance_tree(doms: dict[int,set[int]], cfg: dict[int,list[int]]) -> di
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--draw', action='store_true', help="Draw and display the dominance tree graph.")
+    args = parser.parse_args()
+    
     program = json.load(sys.stdin)
     for func in program["functions"]:
         basic_blocks = form_basic_blocks(func)
@@ -29,3 +35,17 @@ if __name__ == "__main__":
         doms = get_dominators(cfg)
         dom_tree = get_dominance_tree(doms, cfg)
         print(dom_tree)
+        
+        if args.draw:
+            names_map = map_to_block_name(basic_blocks)
+            dot = Digraph()
+            for node, name in names_map.items():
+                dot.node(str(node), label=name)
+
+            for parent, children in dom_tree.items():
+                for child in children:
+                    dot.edge(str(parent), str(child))
+
+            # Render the graph to a file and display
+            dot.render('dominance_tree', format='png', cleanup=True)
+            dot.view()
