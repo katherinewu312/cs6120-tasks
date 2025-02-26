@@ -1,0 +1,26 @@
+main
+{
+  "b1": [],
+  "begin": [
+    "begin"
+  ],
+  "body": [
+    "begin"
+  ],
+  "check": [
+    "begin"
+  ],
+  "end": [],
+  "final": [],
+  "neg": [
+    "begin"
+  ],
+  "then": [
+    "begin"
+  ]
+}
+mod
+{
+  "b1": [],
+  "final": []
+}

@@ -1,0 +1,20 @@
+main
+{
+  "b1": [],
+  "else.18": [
+    "endif.18"
+  ],
+  "else.3": [
+    "final"
+  ],
+  "endif.18": [
+    "final"
+  ],
+  "final": [],
+  "then.18": [
+    "endif.18"
+  ],
+  "then.3": [
+    "final"
+  ]
+}

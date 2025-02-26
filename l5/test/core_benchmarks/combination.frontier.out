@@ -1,0 +1,38 @@
+main
+{
+  "b1": [],
+  "final": []
+}
+combo
+{
+  "b1": [],
+  "final": [],
+  "natural": [
+    "final",
+    "negatives"
+  ],
+  "negatives": [
+    "final"
+  ],
+  "positive": [
+    "final",
+    "negatives"
+  ],
+  "valid": [
+    "final"
+  ],
+  "zeroes": [
+    "final"
+  ]
+}
+factorial
+{
+  "b1": [],
+  "base": [
+    "final"
+  ],
+  "final": [],
+  "recurs": [
+    "final"
+  ]
+}

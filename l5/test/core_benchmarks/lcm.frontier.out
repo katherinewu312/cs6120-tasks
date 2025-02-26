@@ -1,0 +1,25 @@
+main
+{
+  "b1": [],
+  "else.1": [
+    "endif.1"
+  ],
+  "else.2": [
+    "foreverloop"
+  ],
+  "endif.1": [],
+  "final": [],
+  "foreverloop": [
+    "foreverloop"
+  ],
+  "loopend": [],
+  "then.1": [
+    "endif.1"
+  ],
+  "then.2": []
+}
+getMod
+{
+  "b1": [],
+  "final": []
+}

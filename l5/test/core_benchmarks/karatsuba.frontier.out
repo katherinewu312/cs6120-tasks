@@ -1,0 +1,57 @@
+main
+{
+  "b1": [],
+  "final": []
+}
+karatsuba
+{
+  "b1": [],
+  "else": [
+    "end"
+  ],
+  "end": [],
+  "final": [],
+  "then": [
+    "end"
+  ]
+}
+num_digits
+{
+  "b1": [],
+  "final": [],
+  "while.body": [
+    "while.cond"
+  ],
+  "while.cond": [
+    "while.cond"
+  ],
+  "while.finish": []
+}
+max
+{
+  "b1": [],
+  "else": [
+    "final"
+  ],
+  "final": [],
+  "then": [
+    "final"
+  ]
+}
+mod
+{
+  "b1": [],
+  "final": []
+}
+pow
+{
+  "b1": [],
+  "final": [],
+  "for.body.1": [
+    "for.cond.1"
+  ],
+  "for.cond.1": [
+    "for.cond.1"
+  ],
+  "for.end.1": []
+}

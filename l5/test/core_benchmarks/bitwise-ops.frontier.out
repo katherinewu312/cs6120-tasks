@@ -1,0 +1,62 @@
+mod2
+{
+  "b1": [],
+  "final": []
+}
+loop_subroutine
+{
+  "add": [
+    "end_loop"
+  ],
+  "b1": [],
+  "doOr": [
+    "stay"
+  ],
+  "end": [],
+  "end_loop": [
+    "loop"
+  ],
+  "final": [],
+  "here": [
+    "loop"
+  ],
+  "loop": [
+    "loop"
+  ],
+  "stay": [
+    "loop"
+  ]
+}
+OR
+{
+  "b1": [],
+  "final": []
+}
+AND
+{
+  "b1": [],
+  "final": []
+}
+XOR
+{
+  "b1": [],
+  "final": []
+}
+main
+{
+  "and_op": [
+    "end"
+  ],
+  "b1": [],
+  "end": [],
+  "final": [],
+  "or_op": [
+    "end"
+  ],
+  "useless_lbl": [
+    "end"
+  ],
+  "xor_op": [
+    "end"
+  ]
+}

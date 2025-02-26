@@ -1,0 +1,14 @@
+main
+{
+  "b1": [],
+  "else": [],
+  "final": [],
+  "then": [
+    "else"
+  ]
+}
+mod
+{
+  "b1": [],
+  "final": []
+}

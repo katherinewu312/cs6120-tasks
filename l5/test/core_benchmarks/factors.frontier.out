@@ -1,0 +1,18 @@
+main
+{
+  "b1": [],
+  "final": [],
+  "ifno": [
+    "loopcheck"
+  ],
+  "ifyes": [
+    "loopcheck"
+  ],
+  "loopbody": [
+    "loopcheck"
+  ],
+  "loopcheck": [
+    "loopcheck"
+  ],
+  "loopend": []
+}

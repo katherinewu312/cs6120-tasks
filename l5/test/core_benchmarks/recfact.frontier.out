@@ -1,0 +1,19 @@
+main
+{
+  "b1": [],
+  "final": []
+}
+fac
+{
+  "b1": [],
+  "else.0": [
+    "final"
+  ],
+  "endif.0": [
+    "final"
+  ],
+  "final": [],
+  "then.0": [
+    "final"
+  ]
+}

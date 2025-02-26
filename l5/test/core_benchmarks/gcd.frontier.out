@@ -1,0 +1,27 @@
+main
+{
+  "b1": [],
+  "cmp.val": [
+    "cmp.val"
+  ],
+  "else.1": [
+    "loop.bound"
+  ],
+  "else.2": [
+    "cmp.val"
+  ],
+  "final": [],
+  "if.1": [
+    "loop.bound"
+  ],
+  "if.2": [
+    "cmp.val"
+  ],
+  "loop.bound": [
+    "cmp.val"
+  ],
+  "program.end": [],
+  "update.val": [
+    "cmp.val"
+  ]
+}

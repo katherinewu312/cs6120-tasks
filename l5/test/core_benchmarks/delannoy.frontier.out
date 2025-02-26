@@ -1,0 +1,22 @@
+main
+{
+  "b1": [],
+  "final": []
+}
+count_path
+{
+  "b1": [],
+  "else.0": [
+    "final"
+  ],
+  "else.5": [
+    "final"
+  ],
+  "final": [],
+  "then.0": [
+    "final"
+  ],
+  "then.5": [
+    "final"
+  ]
+}

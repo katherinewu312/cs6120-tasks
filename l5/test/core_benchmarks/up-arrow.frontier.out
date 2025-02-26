@@ -1,0 +1,26 @@
+main
+{
+  "b1": [],
+  "final": []
+}
+up_arrow
+{
+  "arrowsgreaterthan1": [
+    "finally"
+  ],
+  "b1": [],
+  "base": [
+    "finally"
+  ],
+  "endloop": [],
+  "final": [],
+  "finally": [
+    "loopstart"
+  ],
+  "loopbody": [
+    "loopstart"
+  ],
+  "loopstart": [
+    "loopstart"
+  ]
+}

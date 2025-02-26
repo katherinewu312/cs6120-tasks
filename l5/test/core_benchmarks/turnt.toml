@@ -1,1 +1,12 @@
+[envs.doms]
 command = "bril2json < {filename} | python ../../dominators.py"
+output.out = "-"
+
+[envs.tree]
+command = "bril2json < {filename} | python ../../dominance_tree.py"
+output."tree.out" = "-"
+
+[envs.frontier]
+command = "bril2json < {filename} | python ../../dominance_frontier.py"
+output."frontier.out" = "-"
+

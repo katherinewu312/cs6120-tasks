@@ -1,0 +1,40 @@
+main
+{
+  "b1": [],
+  "body": [
+    "loop"
+  ],
+  "done": [],
+  "final": [],
+  "loop": [
+    "loop"
+  ]
+}
+getDigits
+{
+  "b1": [],
+  "else": [
+    "final"
+  ],
+  "final": [],
+  "then": [
+    "final"
+  ]
+}
+mod
+{
+  "b1": [],
+  "final": []
+}
+power
+{
+  "b1": [],
+  "body": [
+    "loop"
+  ],
+  "done": [],
+  "final": [],
+  "loop": [
+    "loop"
+  ]
+}

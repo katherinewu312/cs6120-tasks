@@ -1,0 +1,26 @@
+main
+{
+  "b1": [],
+  "else.11": [
+    "endif.11"
+  ],
+  "endif.11": [
+    "for.cond.6"
+  ],
+  "final": [],
+  "for.body.6": [
+    "for.cond.6"
+  ],
+  "for.cond.6": [
+    "for.cond.6"
+  ],
+  "for.end.6": [],
+  "then.11": [
+    "endif.11"
+  ]
+}
+mod
+{
+  "b1": [],
+  "final": []
+}

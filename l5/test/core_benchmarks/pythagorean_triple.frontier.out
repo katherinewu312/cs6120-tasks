@@ -1,0 +1,23 @@
+main
+{
+  "b1": [],
+  "final": [],
+  "finish": [],
+  "found": [
+    "inner_continue"
+  ],
+  "inner_continue": [
+    "inner_loop",
+    "outer_loop"
+  ],
+  "inner_loop": [
+    "inner_loop",
+    "outer_loop"
+  ],
+  "outer_continue": [
+    "outer_loop"
+  ],
+  "outer_loop": [
+    "outer_loop"
+  ]
+}

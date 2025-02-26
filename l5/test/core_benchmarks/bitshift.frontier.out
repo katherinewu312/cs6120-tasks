@@ -1,0 +1,40 @@
+pow
+{
+  "b1": [],
+  "else.0": [
+    "final"
+  ],
+  "else.12": [
+    "endif.12"
+  ],
+  "endif.12": [
+    "final"
+  ],
+  "final": [],
+  "then.0": [
+    "final"
+  ],
+  "then.12": [
+    "endif.12"
+  ]
+}
+mod
+{
+  "b1": [],
+  "final": []
+}
+LEFTSHIFT
+{
+  "b1": [],
+  "final": []
+}
+RIGHTSHIFT
+{
+  "b1": [],
+  "final": []
+}
+main
+{
+  "b1": [],
+  "final": []
+}

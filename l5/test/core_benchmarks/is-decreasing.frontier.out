@@ -1,0 +1,34 @@
+main
+{
+  "b1": [],
+  "final": []
+}
+is_decreasing
+{
+  "b1": [],
+  "final": [],
+  "label11": [
+    "final"
+  ],
+  "label12": [
+    "label4"
+  ],
+  "label13": [
+    "label4"
+  ],
+  "label4": [
+    "label4"
+  ],
+  "label5": [
+    "final",
+    "label4"
+  ],
+  "label6": [
+    "final"
+  ]
+}
+last_digit
+{
+  "b1": [],
+  "final": []
+}

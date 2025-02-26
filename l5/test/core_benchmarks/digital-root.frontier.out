@@ -1,0 +1,29 @@
+main
+{
+  "b1": [],
+  "begin": [
+    "begin"
+  ],
+  "check_done": [
+    "begin"
+  ],
+  "check_result": [
+    "begin",
+    "check_result"
+  ],
+  "done": [],
+  "final": [],
+  "process_result": [
+    "check_result"
+  ]
+}
+is_single_digit
+{
+  "b1": [],
+  "final": []
+}
+peel_last_digit
+{
+  "b1": [],
+  "final": []
+}

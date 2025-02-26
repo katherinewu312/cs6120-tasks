@@ -1,0 +1,19 @@
+main
+{
+  "b1": [],
+  "final": []
+}
+printBinary
+{
+  "b1": [],
+  "end": [],
+  "final": [],
+  "rec": [
+    "end"
+  ]
+}
+mod
+{
+  "b1": [],
+  "final": []
+}

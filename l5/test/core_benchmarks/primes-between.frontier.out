@@ -1,0 +1,49 @@
+main
+{
+  "false": [
+    "for.outer.cond"
+  ],
+  "final": [],
+  "for.inner.body": [
+    "for.inner.cond",
+    "for.inner.end"
+  ],
+  "for.inner.cond": [
+    "for.inner.cond",
+    "for.outer.cond"
+  ],
+  "for.inner.end": [
+    "for.outer.cond"
+  ],
+  "for.inner.init": [
+    "for.outer.cond"
+  ],
+  "for.outer.body": [
+    "for.outer.cond"
+  ],
+  "for.outer.cond": [
+    "for.outer.cond"
+  ],
+  "for.outer.end": [],
+  "for.outer.init": [],
+  "if.inner.body": [
+    "for.inner.end"
+  ],
+  "if.inner.end": [
+    "for.inner.cond"
+  ],
+  "if.outer.body": [
+    "if.outer.end"
+  ],
+  "if.outer.end": [
+    "for.outer.cond"
+  ],
+  "true": [
+    "for.outer.cond"
+  ]
+}
+mod
+{
+  "b1": [],
+  "final": []
+}

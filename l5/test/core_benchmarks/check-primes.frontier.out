@@ -1,0 +1,55 @@
+main
+{
+  "b1": [],
+  "else.7": [
+    "endif.7"
+  ],
+  "endif.7": [
+    "for.cond.1"
+  ],
+  "final": [],
+  "for.body.1": [
+    "for.cond.1"
+  ],
+  "for.cond.1": [
+    "for.cond.1"
+  ],
+  "for.end.1": [],
+  "then.7": [
+    "endif.7"
+  ]
+}
+checkPrime
+{
+  "b1": [],
+  "else.0": [
+    "final"
+  ],
+  "else.18": [
+    "for.cond.5"
+  ],
+  "endif.0": [
+    "final"
+  ],
+  "endif.18": [
+    "for.cond.5"
+  ],
+  "final": [],
+  "for.body.5": [
+    "final",
+    "for.cond.5"
+  ],
+  "for.cond.5": [
+    "final",
+    "for.cond.5"
+  ],
+  "for.end.5": [
+    "final"
+  ],
+  "then.0": [
+    "final"
+  ],
+  "then.18": [
+    "final"
+  ]
+}

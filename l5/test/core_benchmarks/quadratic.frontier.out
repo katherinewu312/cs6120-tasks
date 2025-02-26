@@ -1,0 +1,34 @@
+main
+{
+  "b1": [],
+  "final": []
+}
+sqrt
+{
+  "b1": [],
+  "else.7": [
+    "for.cond.0"
+  ],
+  "endif.7": [
+    "for.cond.0"
+  ],
+  "final": [],
+  "for.body.0": [
+    "final",
+    "for.cond.0"
+  ],
+  "for.cond.0": [
+    "for.cond.0"
+  ],
+  "for.end.0": [
+    "final"
+  ],
+  "then.7": [
+    "final"
+  ]
+}
+quadratic
+{
+  "b1": [],
+  "final": []
+}

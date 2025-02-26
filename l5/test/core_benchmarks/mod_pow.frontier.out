@@ -1,0 +1,40 @@
+main
+{
+  "b1": [],
+  "final": []
+}
+mod_pow
+{
+  "b1": [],
+  "else.0": [
+    "final"
+  ],
+  "else.15": [
+    "endif.15"
+  ],
+  "endif.15": [
+    "for.cond.8"
+  ],
+  "final": [],
+  "for.body.8": [
+    "for.cond.8"
+  ],
+  "for.cond.8": [
+    "final",
+    "for.cond.8"
+  ],
+  "for.end.8": [
+    "final"
+  ],
+  "then.0": [
+    "final"
+  ],
+  "then.15": [
+    "endif.15"
+  ]
+}
+mod
+{
+  "b1": [],
+  "final": []
+}

@@ -1,0 +1,26 @@
+main
+{
+  "b1": [],
+  "final": []
+}
+catalan
+{
+  "b1": [],
+  "else": [
+    "final"
+  ],
+  "final": [],
+  "if": [
+    "final"
+  ],
+  "while": [
+    "final",
+    "while"
+  ],
+  "while.body": [
+    "while"
+  ],
+  "while.end": [
+    "final"
+  ]
+}

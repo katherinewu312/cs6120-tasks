@@ -1,0 +1,65 @@
+abs
+{
+  "abs_res": [],
+  "b1": [],
+  "final": [],
+  "mul_neg_one": [
+    "abs_res"
+  ]
+}
+mod
+{
+  "b1": [],
+  "final": []
+}
+gcd
+{
+  "final": [],
+  "while.body": [
+    "while.cond"
+  ],
+  "while.cond": [
+    "while.cond"
+  ],
+  "while.finish": []
+}
+lcm
+{
+  "b1": [],
+  "check_b": [
+    "final",
+    "is_good"
+  ],
+  "final": [],
+  "is_good": [
+    "final"
+  ],
+  "special_case": [
+    "final"
+  ]
+}
+orders
+{
+  "final": [],
+  "for.body": [
+    "for.cond"
+  ],
+  "for.body.print": [
+    "for.cond"
+  ],
+  "for.cond": [
+    "for.cond"
+  ],
+  "for.finish": [],
+  "gcd": [
+    "for.body.print"
+  ],
+  "lcm": [
+    "for.body.print"
+  ]
+}
+main
+{
+  "b1": [],
+  "final": []
+}

@@ -1,0 +1,28 @@
+permutation
+{
+  "b1": [],
+  "else.0": [
+    "final"
+  ],
+  "final": [],
+  "then.0": [
+    "final"
+  ]
+}
+factorial
+{
+  "b1": [],
+  "final": [],
+  "for.body.0": [
+    "for.cond.0"
+  ],
+  "for.cond.0": [
+    "for.cond.0"
+  ],
+  "for.end.0": []
+}
+main
+{
+  "b1": [],
+  "final": []
+}

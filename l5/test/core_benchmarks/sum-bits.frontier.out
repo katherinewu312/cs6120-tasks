@@ -1,0 +1,17 @@
+main
+{
+  "b1": [],
+  "body": [
+    "loop"
+  ],
+  "done": [],
+  "final": [],
+  "loop": [
+    "loop"
+  ]
+}
+mod
+{
+  "b1": [],
+  "final": []
+}

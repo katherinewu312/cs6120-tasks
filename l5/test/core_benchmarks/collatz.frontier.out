@@ -1,0 +1,21 @@
+main
+{
+  "b1": [],
+  "cond": [
+    "print"
+  ],
+  "end": [],
+  "even": [
+    "print"
+  ],
+  "final": [],
+  "loop": [
+    "print"
+  ],
+  "odd": [
+    "print"
+  ],
+  "print": [
+    "print"
+  ]
+}

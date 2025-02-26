@@ -1,0 +1,28 @@
+lsb
+{
+  "b1": [],
+  "final": []
+}
+hamm_lsb
+{
+  "b1": [],
+  "else": [
+    "final"
+  ],
+  "final": [],
+  "if": [
+    "final"
+  ]
+}
+main
+{
+  "b1": [],
+  "body": [
+    "while"
+  ],
+  "end": [],
+  "final": [],
+  "while": [
+    "while"
+  ]
+}

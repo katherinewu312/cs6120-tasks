@@ -1,0 +1,27 @@
+mod
+{
+  "b1": [],
+  "final": []
+}
+lsb
+{
+  "b1": [],
+  "final": []
+}
+square
+{
+  "b1": [],
+  "final": []
+}
+main
+{
+  "b1": [],
+  "final": [],
+  "loop.body": [
+    "loop.branch"
+  ],
+  "loop.branch": [
+    "loop.branch"
+  ],
+  "loop.end": []
+}

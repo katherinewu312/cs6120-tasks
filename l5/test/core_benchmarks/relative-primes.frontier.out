@@ -1,0 +1,61 @@
+main
+{
+  "b1": [],
+  "final": []
+}
+mod
+{
+  "b1": [],
+  "final": []
+}
+gcd
+{
+  "b1": [],
+  "else.0": [
+    "endif.0"
+  ],
+  "else.12": [
+    "final"
+  ],
+  "else.7": [
+    "final"
+  ],
+  "endif.0": [],
+  "endif.12": [
+    "final"
+  ],
+  "endif.7": [
+    "final"
+  ],
+  "final": [],
+  "then.0": [
+    "endif.0"
+  ],
+  "then.12": [
+    "final"
+  ],
+  "then.7": [
+    "final"
+  ]
+}
+relative_primes
+{
+  "b1": [],
+  "else.7": [
+    "endif.7"
+  ],
+  "endif.7": [
+    "for.cond.0"
+  ],
+  "final": [],
+  "for.body.0": [
+    "for.cond.0"
+  ],
+  "for.cond.0": [
+    "for.cond.0"
+  ],
+  "for.end.0": [],
+  "then.7": [
+    "endif.7"
+  ]
+}

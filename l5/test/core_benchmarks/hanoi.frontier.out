@@ -1,0 +1,14 @@
+hanoi
+{
+  "b1": [],
+  "else": [],
+  "final": [],
+  "then": [
+    "else"
+  ]
+}
+main
+{
+  "b1": [],
+  "final": []
+}

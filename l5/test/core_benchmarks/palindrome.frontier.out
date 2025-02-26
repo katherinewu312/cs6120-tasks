@@ -1,0 +1,54 @@
+main
+{
+  "b1": [],
+  "final": [],
+  "for.body": [
+    "for.cond"
+  ],
+  "for.cond": [
+    "for.cond"
+  ],
+  "for.end": [],
+  "if.false": [
+    "for.cond"
+  ],
+  "if.true": [
+    "for.cond"
+  ]
+}
+pow
+{
+  "b1": [],
+  "final": [],
+  "for.body.pow": [
+    "for.cond.pow"
+  ],
+  "for.cond.pow": [
+    "for.cond.pow"
+  ],
+  "for.end.pow": [],
+  "if.false.pow": [
+    "for.cond.pow"
+  ],
+  "if.true.pow": [
+    "for.cond.pow"
+  ]
+}
+palindrome
+{
+  "b1": [],
+  "final": [],
+  "if.end.palindrome": [],
+  "if.false.mirror": [
+    "if.end.palindrome"
+  ],
+  "if.false.palindrome": [
+    "if.end.palindrome"
+  ],
+  "if.true.mirror": [
+    "if.end.palindrome"
+  ],
+  "if.true.palindrome": [
+    "if.end.palindrome"
+  ]
+}

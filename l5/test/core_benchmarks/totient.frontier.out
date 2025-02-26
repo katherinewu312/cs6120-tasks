@@ -1,0 +1,42 @@
+main
+{
+  "b1": [],
+  "final": []
+}
+totient
+{
+  "b1": [],
+  "else_lbl": [
+    "for.set.cond"
+  ],
+  "final": [],
+  "final_else_label": [],
+  "final_if_label": [
+    "final_else_label"
+  ],
+  "for.set.body": [
+    "for.set.cond"
+  ],
+  "for.set.cond": [
+    "for.set.cond"
+  ],
+  "for.set.end": [],
+  "if_lbl": [
+    "else_lbl"
+  ],
+  "while.body": [
+    "while.set.cond"
+  ],
+  "while.end": [
+    "else_lbl"
+  ],
+  "while.set.cond": [
+    "else_lbl",
+    "while.set.cond"
+  ]
+}
+mod
+{
+  "b1": [],
+  "final": []
+}
