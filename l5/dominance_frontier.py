@@ -142,8 +142,8 @@ class TestDominanceFrontier(unittest.TestCase):
 def post_process_df(
     df: Dict[Idx, Set[Idx]], name_map: Dict[Idx, str]
 ) -> Dict[str, List[str]]:
-    """Converts sets to sorted lists in the values of the dominance frontier
-    (for the sake of consistent formatting)"""
+    """Updates the dominance frontier so that keys and values are now
+    the labels of basic blocks (instead of their indices)"""
 
     new_df = {
         name_map[k]: sorted([name_map[v] for v in values]) for (k, values) in df.items()
@@ -152,7 +152,7 @@ def post_process_df(
 
 
 if __name__ == "__main__":
-    # Set up an optional cmd-line argument `--test` that runs the test suite
+    # Set up an optional cmd-line argument `--test` that runs unit tests
     parser = argparse.ArgumentParser()
     parser.add_argument("--test", action="store_true", help="Runs unit tests")
     args = parser.parse_args()
@@ -164,9 +164,17 @@ if __name__ == "__main__":
         for func in program["functions"]:
             bbs: List[Block] = form_basic_blocks(func)
             name_map = map_to_block_name(bbs)
-            cfg: CFG = build_cfg(bbs)
-            print(func["name"])
+            cfg = build_cfg(bbs)
+            preds = get_pred_cfg(cfg)
             doms = get_dominators(cfg)
-            df: Dict[Idx, Set[Idx]] = get_dominance_frontier(cfg)
-            new_df = post_process_df(df, name_map)
-            print(json.dumps(new_df, indent=2, sort_keys=True))
+
+            # Compute dominance frontiers
+            df = get_dominance_frontier(cfg)
+
+            # Check that the DF we computed is well-formed
+            assert df_well_formed(doms, df, preds)
+
+            # Replace block indices in the DF with block labels
+            final_df = post_process_df(df, name_map)
+            print(func["name"])
+            print(json.dumps(final_df, indent=2, sort_keys=True))
