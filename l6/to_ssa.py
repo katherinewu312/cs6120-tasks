@@ -40,6 +40,7 @@ def _get_function_vars(blocks: list[list[[dict]]]) -> dict[str, str]:
 
 
 def to_ssa(blocks: list[list[[dict]]]) -> list[list[dict]]:
+    """Take a list of basic blocks and return the same blocks converted to SSA form"""
     cfg = build_cfg(blocks)
     all_vars = _get_function_vars(blocks)
     ssa_blocks = _rename_vars(blocks)
@@ -50,12 +51,12 @@ def to_ssa(blocks: list[list[[dict]]]) -> list[list[dict]]:
             # Get the block's copy of all shadow variables
             for v, t in all_vars.items():
                 get_instr = {"op": "get", "type": t, "dest": f"{label}.{v}.0"}
-                block.insert(0, get_instr)
+                block.insert(1, get_instr)  # After label
 
         # Set the shadow variables of all the block's successors
         seen_vars = set()
-        set_instrs = []
-        for instr in reversed(block):
+        orig_block_len = len(block)
+        for i, instr in enumerate(reversed(block)):
             # The set should follow the last assign to a variable
             if dest := instr.get("dest"):
                 var = dest.split(".")[1]
@@ -66,9 +67,10 @@ def to_ssa(blocks: list[list[[dict]]]) -> list[list[dict]]:
                         if succ == len(ssa_blocks):
                             continue
                         succ_label = _get_block_label(ssa_blocks[succ])
-                        set_instrs.append({"op": "set", "args": [f"{succ_label}.{var}.0", dest]})
+                        set_instr = {"op": "set", "args": [f"{succ_label}.{var}.0", dest]}
+                        block.insert(orig_block_len-i, set_instr)
                 seen_vars.add(var)
-        block.extend(set_instrs)
+
 
     return ssa_blocks
 
