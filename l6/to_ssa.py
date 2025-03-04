@@ -54,6 +54,11 @@ def to_ssa(blocks: list[list[[dict]]]) -> list[list[dict]]:
             for v, t in dest_vars.items():
                 get_instr = {"op": "get", "type": t, "dest": f"{label}.{v}.0"}
                 block.insert(1, get_instr)  # After label
+        else:
+            # Handle undefined paths by explicitly setting all vars to undef at entry
+            for v, t in dest_vars.items():
+                undef_instr = {"op": "undef", "type": t, "dest": f"entry.{v}.0"}
+                block.insert(1, undef_instr)  # After label
 
         # Set the shadow variables of all the block's successors
         seen_vars = set()
@@ -79,9 +84,6 @@ def to_ssa(blocks: list[list[[dict]]]) -> list[list[dict]]:
 
 if __name__ == "__main__":
     program = json.load(sys.stdin)
-    # from pathlib import Path
-    # program = json.load(Path("test/test.json").open())
-
     for func in program["functions"]:
         bbs = form_basic_blocks(func)
         ssa = to_ssa(bbs)

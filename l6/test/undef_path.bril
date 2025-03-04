@@ -1,0 +1,15 @@
+@main() {
+.entry:
+    a: int = const 47;
+    t: bool = const true;
+    br t .left .right;
+.left:
+    a: int = add a a;
+    b: int = const 5;
+    jmp .exit;
+.right:
+    a: int = mul a a;
+    jmp .exit;
+.exit:
+    print a;
+}
