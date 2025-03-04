@@ -1,5 +1,5 @@
 [envs.correct]
-command = "bril2json < {filename} | python ../to_ssa.py | brili"
+command = "bril2json < {filename} | python ../to_ssa.py | brili {args}"
 output.correct = "-"
 
 [envs.is_ssa]

@@ -16,12 +16,14 @@ def _rename_vars(blocks: list[list[[dict]]]) -> list[list[[dict]]]:
     {block_label}.{variable_name}.{counter} (counter starts from 1)
     """
     renamed_blocks = blocks.copy()
+    dest_vars = _get_all_dest_vars(renamed_blocks)
     for b in renamed_blocks:
         label = _get_block_label(b)
         seen_vars_counter = Counter()
         for instr in b:
             if args := instr.get("args"):
-                new_args = [f"{label}.{a}.{seen_vars_counter[a]}" for a in args]
+                # Rename all args except function args
+                new_args = [f"{label}.{a}.{seen_vars_counter[a]}" if a in dest_vars else a for a in args ]
                 instr["args"] = new_args
             if dest := instr.get("dest"):
                 seen_vars_counter[dest] += 1
@@ -30,7 +32,7 @@ def _rename_vars(blocks: list[list[[dict]]]) -> list[list[[dict]]]:
     return renamed_blocks
 
 
-def _get_function_vars(blocks: list[list[[dict]]]) -> dict[str, str]:
+def _get_all_dest_vars(blocks: list[list[[dict]]]) -> dict[str, str]:
     """Take a list of basic blocks and return a dict mapping dest variable names to their types"""
     all_vars = {}
     for b in blocks:
@@ -42,14 +44,14 @@ def _get_function_vars(blocks: list[list[[dict]]]) -> dict[str, str]:
 def to_ssa(blocks: list[list[[dict]]]) -> list[list[dict]]:
     """Take a list of basic blocks and return the same blocks converted to SSA form"""
     cfg = build_cfg(blocks)
-    all_vars = _get_function_vars(blocks)
+    dest_vars = _get_all_dest_vars(blocks)
     ssa_blocks = _rename_vars(blocks)
     for num, block in enumerate(ssa_blocks):
         label = _get_block_label(block)
 
         if num != 0:
             # Get the block's copy of all shadow variables
-            for v, t in all_vars.items():
+            for v, t in dest_vars.items():
                 get_instr = {"op": "get", "type": t, "dest": f"{label}.{v}.0"}
                 block.insert(1, get_instr)  # After label
 
@@ -77,6 +79,9 @@ def to_ssa(blocks: list[list[[dict]]]) -> list[list[dict]]:
 
 if __name__ == "__main__":
     program = json.load(sys.stdin)
+    # from pathlib import Path
+    # program = json.load(Path("test/test.json").open())
+
     for func in program["functions"]:
         bbs = form_basic_blocks(func)
         ssa = to_ssa(bbs)
