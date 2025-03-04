@@ -58,7 +58,10 @@ def to_ssa(blocks: list[list[[dict]]]) -> list[list[dict]]:
             # Handle undefined paths by explicitly setting all vars to undef at entry
             for v, t in dest_vars.items():
                 undef_instr = {"op": "undef", "type": t, "dest": f"entry.{v}.0"}
-                block.insert(1, undef_instr)  # After label
+                if "label" in block[0]:
+                    block.insert(1, undef_instr)  # After label
+                else:
+                    block.insert(0, undef_instr)
 
         # Set the shadow variables of all the block's successors
         seen_vars = set()
