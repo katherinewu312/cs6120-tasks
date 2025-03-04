@@ -1,0 +1,6 @@
+@main {
+  entry.v0.1: int = const 1;
+  entry.v1.1: int = const 2;
+  entry.v2.1: int = add entry.v0.1 entry.v1.1;
+  print entry.v2.1;
+}
