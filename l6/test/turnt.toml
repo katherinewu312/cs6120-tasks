@@ -1,5 +1,5 @@
 [envs.correct]
-command = "bril2json < {filename} | python ../to_ssa.py | brili {args}"
+command = "if test `bril2json < {filename} | python ../to_ssa.py | brili {args}` -eq `bril2json < {filename}| brili {args}`; then echo yes; fi"
 output.correct = "-"
 
 [envs.is_ssa]
