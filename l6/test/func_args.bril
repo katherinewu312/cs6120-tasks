@@ -1,0 +1,11 @@
+@main {
+  a : int = const 2;
+  b : int = const 4;
+  c : int = call @add a b;
+  print c;
+}
+
+@add (a: int, b: int): int{
+    c: int = add a b;
+    ret c;
+}

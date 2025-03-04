@@ -90,4 +90,4 @@ if __name__ == "__main__":
         func["instrs"] = []
         for bb in ssa:
             func["instrs"].extend(bb)
-        json.dump(program, sys.stdout, indent=2)
+    json.dump(program, sys.stdout, indent=2)
