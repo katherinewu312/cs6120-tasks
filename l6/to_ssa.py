@@ -41,9 +41,10 @@ def _get_all_dest_vars(blocks: list[list[[dict]]]) -> dict[str, str]:
     return all_vars
 
 
-def to_ssa(blocks: list[list[[dict]]]) -> list[list[dict]]:
+def to_ssa(blocks: list[list[[dict]]], func_args: list[dict]) -> list[list[dict]]:
     """Take a list of basic blocks and return the same blocks converted to SSA form"""
     cfg = build_cfg(blocks)
+    func_arg_to_type = {a["name"]: a["type"] for a in func_args}
     dest_vars = _get_all_dest_vars(blocks)
     ssa_blocks = _rename_vars(blocks)
     for num, block in enumerate(ssa_blocks):
@@ -55,13 +56,19 @@ def to_ssa(blocks: list[list[[dict]]]) -> list[list[dict]]:
                 get_instr = {"op": "get", "type": t, "dest": f"{label}.{v}.0"}
                 block.insert(1, get_instr)  # After label
         else:
-            # Handle undefined paths by explicitly setting all vars to undef at entry
+            # Handle undefined paths by explicitly setting all vars at entry
             for v, t in dest_vars.items():
-                undef_instr = {"op": "undef", "type": t, "dest": f"entry.{v}.0"}
-                if "label" in block[0]:
-                    block.insert(1, undef_instr)  # After label
+                if v not in func_arg_to_type:
+                    # var is undefined
+                    init_instr = {"op": "undef", "type": t, "dest": f"entry.{v}.0"}
                 else:
-                    block.insert(0, undef_instr)
+                    # rename function argument
+                    init_instr = {"op": "id", "type": func_arg_to_type[v], "dest": f"entry.{v}.0", "args": [v]}
+                if "label" in block[0]:
+                    block.insert(1, init_instr)  # After label
+                else:
+                    block.insert(0, init_instr)
+
 
         # Set the shadow variables of all the block's successors
         seen_vars = set()
@@ -69,7 +76,9 @@ def to_ssa(blocks: list[list[[dict]]]) -> list[list[dict]]:
         for i, instr in enumerate(reversed(block)):
             # The set should follow the last assign to a variable
             if dest := instr.get("dest"):
-                var = dest.split(".")[1]
+                # Parse dest to find original var name
+                parsed_var = dest[len(label):].split(".")
+                var = ".".join(parsed_var[1:-1])
                 if var not in seen_vars:
                     # Need a set instr for each successor
                     for succ in cfg[num]:
@@ -89,7 +98,7 @@ if __name__ == "__main__":
     program = json.load(sys.stdin)
     for func in program["functions"]:
         bbs = form_basic_blocks(func)
-        ssa = to_ssa(bbs)
+        ssa = to_ssa(bbs, func.get("args", []))
         func["instrs"] = []
         for bb in ssa:
             func["instrs"].extend(bb)
