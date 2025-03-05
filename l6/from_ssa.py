@@ -3,7 +3,8 @@ import sys
 
 from cfg import form_basic_blocks
 
-def _get_var_types(blocks: list[list[[dict]]]) -> dict[str, str]:
+
+def _get_var_types(blocks: list[list[dict]]) -> dict[str, str]:
     """Takes a list of basic blocks, and for every 'get' instruction, obtains the dest variable's type
     Returns a dict mapping dest variable name -> its type"""
     var_types_map = dict()
@@ -16,18 +17,24 @@ def _get_var_types(blocks: list[list[[dict]]]) -> dict[str, str]:
 def from_ssa(blocks: list[list[dict]]) -> list[list[dict]]:
     """Takes a list of basic blocks in SSA form and returns the same blocks converted out of SSA form"""
     var_types_map = _get_var_types(blocks)
+    from_ssa_blocks = []
     for block in blocks:
-        for i,instr in enumerate(block):
-            # Delete 'get' instructions
+        curr_block = []
+        for instr in block:
             if "op" in instr and instr["op"] == "get":
-                del block[i]
-            
-            # Replace 'set' instructions with x: type = id y for set x y
-            if "op" in instr and instr["op"] == "set":
+                # Delete/ignore 'get' instructions
+                pass
+            elif "op" in instr and instr["op"] == "set":
+                # Replace 'set' instructions with x: type = id y for set x y
                 shadow_var, normal_var = instr["args"]
                 new_instr = {"args": [normal_var], "dest": shadow_var, "op": "id", "type": var_types_map[shadow_var]}
-                block[i] = new_instr 
-    return blocks
+                curr_block.append(new_instr)
+            else:
+                # Otherwise, preserve all other instructions
+                curr_block.append(instr)
+        from_ssa_blocks.append(curr_block)
+                
+    return from_ssa_blocks
 
 
 if __name__ == "__main__":
