@@ -60,10 +60,10 @@ def to_ssa(blocks: list[list[[dict]]], func_args: list[dict]) -> list[list[dict]
             for v, t in dest_vars.items():
                 if v not in func_arg_to_type:
                     # var is undefined
-                    init_instr = {"op": "undef", "type": t, "dest": f"entry.{v}.0"}
+                    init_instr = {"op": "undef", "type": t, "dest": f"{label}.{v}.0"}
                 else:
                     # rename function argument
-                    init_instr = {"op": "id", "type": func_arg_to_type[v], "dest": f"entry.{v}.0", "args": [v]}
+                    init_instr = {"op": "id", "type": func_arg_to_type[v], "dest": f"{label}.{v}.0", "args": [v]}
                 if "label" in block[0]:
                     block.insert(1, init_instr)  # After label
                 else:

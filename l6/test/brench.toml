@@ -7,7 +7,7 @@ pipeline = [
     "brili -p {args}",
 ]
 
-[runs.lvn]
+[runs.to_ssa]
 pipeline = [
     "bril2json",
     "python3 ../to_ssa.py",
