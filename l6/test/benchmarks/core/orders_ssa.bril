@@ -77,5 +77,8 @@
   while.finish.zero.0: int = get;
   while.finish.mod.0: int = get;
 
+  ###################################################
+  # Actual instructions for this block begin here 
+  ###################################################
   ret while.finish.b.0;
 }
