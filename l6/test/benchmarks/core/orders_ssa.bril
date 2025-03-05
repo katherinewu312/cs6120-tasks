@@ -3,41 +3,63 @@
   while.cond.b.0: int = id b;
   set while.body.b.0 while.cond.b.0;
   set while.finish.b.0 while.cond.b.0;
+
   while.cond.a.0: int = id a;
   set while.body.a.0 while.cond.a.0;
   set while.finish.a.0 while.cond.a.0;
+  
   while.cond.is_term.0: bool = undef;
   while.cond.zero.0: int = undef;
   while.cond.mod.0: int = undef;
+  
   while.cond.mod.1: int = call @mod while.cond.a.0 while.cond.b.0;
   set while.body.mod.0 while.cond.mod.1;
   set while.finish.mod.0 while.cond.mod.1;
+  
   while.cond.zero.1: int = const 0;
   set while.body.zero.0 while.cond.zero.1;
   set while.finish.zero.0 while.cond.zero.1;
+  
   while.cond.is_term.1: bool = eq while.cond.mod.1 while.cond.zero.1;
   set while.body.is_term.0 while.cond.is_term.1;
   set while.finish.is_term.0 while.cond.is_term.1;
+  
   br while.cond.is_term.1 .while.finish .while.body;
+
 .while.body:
+  # For each of this block's private var, retrieve the value of its 
+  # corresponding shadow var 
   while.body.b.0: int = get;
   while.body.a.0: int = get;
   while.body.is_term.0: bool = get;
+
+  # `.while.cond` is a successor of `.while.body`, so we need a set instr 
   set while.cond.is_term.0 while.body.is_term.0;
   while.body.zero.0: int = get;
+  
   set while.cond.zero.0 while.body.zero.0;
   while.body.mod.0: int = get;
+  
   set while.cond.mod.0 while.body.mod.0;
+
+  # Actual instructions for the `.while.body` block start here 
+
   while.body.a.1: int = id while.body.b.0;
   set while.cond.a.0 while.body.a.1;
+
   while.body.b.1: int = id while.body.mod.0;
   set while.cond.b.0 while.body.b.1;
+
   jmp .while.cond;
+
 .while.finish:
+  # For each private copy of a variable, retrieve the value of its 
+  # corresponding shadow var 
   while.finish.b.0: int = get;
   while.finish.a.0: int = get;
   while.finish.is_term.0: bool = get;
   while.finish.zero.0: int = get;
   while.finish.mod.0: int = get;
+
   ret while.finish.b.0;
 }
