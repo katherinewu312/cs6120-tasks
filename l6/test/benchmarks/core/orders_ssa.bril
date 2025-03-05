@@ -1,5 +1,13 @@
 @gcd(a: int, b: int): int {
 .while.cond:
+  # For all dest vars in each of `.while.cond`'s successors, 
+  # create a private copy of the var
+  # local this block, and use `set` to propgate the values of the private vars
+  # to the successors' shadow vars
+
+  # Of `.while.cond`'s two successors, only `.while.body` contains dest vars
+  # (namely `b` and `a`), so here we only create private copies of `b` and `a`
+
   while.cond.b.0: int = id b;
   set while.body.b.0 while.cond.b.0;
   set while.finish.b.0 while.cond.b.0;
@@ -8,9 +16,14 @@
   set while.body.a.0 while.cond.a.0;
   set while.finish.a.0 while.cond.a.0;
   
+  # Initialize all the dest vars that are defined in this block
   while.cond.is_term.0: bool = undef;
   while.cond.zero.0: int = undef;
   while.cond.mod.0: int = undef;
+
+  ###################################################
+  # Actual instructions for the block begin here
+  ###################################################
   
   while.cond.mod.1: int = call @mod while.cond.a.0 while.cond.b.0;
   set while.body.mod.0 while.cond.mod.1;
@@ -34,6 +47,7 @@
   while.body.is_term.0: bool = get;
 
   # `.while.cond` is a successor of `.while.body`, so we need a set instr 
+  # for each dest variable in `.while.cond` (i.e. `{mod, zero, is_term}`)
   set while.cond.is_term.0 while.body.is_term.0;
   while.body.zero.0: int = get;
   
@@ -42,7 +56,9 @@
   
   set while.cond.mod.0 while.body.mod.0;
 
-  # Actual instructions for the `.while.body` block start here 
+  ###################################################
+  # Actual instructions for this block begin here 
+  ###################################################
 
   while.body.a.1: int = id while.body.b.0;
   set while.cond.a.0 while.body.a.1;
