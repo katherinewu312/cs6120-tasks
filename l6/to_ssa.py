@@ -2,7 +2,7 @@ import json
 import sys
 from collections import Counter
 
-from cfg import form_basic_blocks, build_cfg, get_pred_cfg
+from cfg import form_basic_blocks, build_cfg
 
 
 def _get_block_label(block: list[dict]) -> str:
@@ -81,7 +81,7 @@ def to_ssa(blocks: list[list[[dict]]], func_args: list[dict]) -> list[list[dict]
                 var = ".".join(parsed_var[1:-1])
                 if var not in seen_vars:
                     # Need a set instr for each successor
-                    for succ in cfg[num]:
+                    for succ in cfg.get(num, []):
                         # Ignore dummy exit node
                         if succ == len(ssa_blocks):
                             continue
@@ -98,7 +98,8 @@ if __name__ == "__main__":
     program = json.load(sys.stdin)
     for func in program["functions"]:
         bbs = form_basic_blocks(func)
-        ssa = to_ssa(bbs, func.get("args", []))
+        reachable_bbs = [bb for i, bb in enumerate(bbs) if ("label" in bb[0]) or (i == 0)]
+        ssa = to_ssa(reachable_bbs, func.get("args", []))
         func["instrs"] = []
         for bb in ssa:
             func["instrs"].extend(bb)
