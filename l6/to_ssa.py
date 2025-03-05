@@ -44,9 +44,17 @@ def _get_all_dest_vars(blocks: list[list[[dict]]]) -> dict[str, str]:
 def to_ssa(blocks: list[list[[dict]]], func_args: list[dict]) -> list[list[dict]]:
     """Take a list of basic blocks and return the same blocks converted to SSA form"""
     cfg = build_cfg(blocks)
+
+    # Map each function argument to its type 
     func_arg_to_type = {a["name"]: a["type"] for a in func_args}
+
+    # Maps each dest var to its type
     dest_vars = _get_all_dest_vars(blocks)
+
+    # Rename all variables in blocks using the block label + a counter
     ssa_blocks = _rename_vars(blocks)
+
+
     for num, block in enumerate(ssa_blocks):
         label = _get_block_label(block)
 
@@ -59,10 +67,10 @@ def to_ssa(blocks: list[list[[dict]]], func_args: list[dict]) -> list[list[dict]
             # Handle undefined paths by explicitly setting all vars at entry
             for v, t in dest_vars.items():
                 if v not in func_arg_to_type:
-                    # var is undefined
+                    # var is undefined (create an undef instruction)
                     init_instr = {"op": "undef", "type": t, "dest": f"{label}.{v}.0"}
                 else:
-                    # rename function argument
+                    # rename function argument using an id instruction
                     init_instr = {"op": "id", "type": func_arg_to_type[v], "dest": f"{label}.{v}.0", "args": [v]}
                 if "label" in block[0]:
                     block.insert(1, init_instr)  # After label
@@ -87,7 +95,7 @@ def to_ssa(blocks: list[list[[dict]]], func_args: list[dict]) -> list[list[dict]
                             continue
                         succ_label = _get_block_label(ssa_blocks[succ])
                         set_instr = {"op": "set", "args": [f"{succ_label}.{var}.0", dest]}
-                        block.insert(orig_block_len-i, set_instr)
+                        block.insert(orig_block_len - i, set_instr)
                 seen_vars.add(var)
 
 
