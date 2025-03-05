@@ -1,0 +1,259 @@
+@abs(a: int): int {
+  entry.a.0: int = id a;
+  set abs_res.a.0 entry.a.0;
+  set mul_neg_one.a.0 entry.a.0;
+  entry.neg_one.0: int = undef;
+  set abs_res.neg_one.0 entry.neg_one.0;
+  set mul_neg_one.neg_one.0 entry.neg_one.0;
+  entry.is_neg.0: bool = undef;
+  entry.zero.0: int = undef;
+  entry.zero.1: int = const 0;
+  set abs_res.zero.0 entry.zero.1;
+  set mul_neg_one.zero.0 entry.zero.1;
+  entry.is_neg.1: bool = lt entry.a.0 entry.zero.1;
+  set abs_res.is_neg.0 entry.is_neg.1;
+  set mul_neg_one.is_neg.0 entry.is_neg.1;
+  br entry.is_neg.1 .mul_neg_one .abs_res;
+.mul_neg_one:
+  mul_neg_one.a.0: int = get;
+  mul_neg_one.neg_one.0: int = get;
+  mul_neg_one.is_neg.0: bool = get;
+  set abs_res.is_neg.0 mul_neg_one.is_neg.0;
+  mul_neg_one.zero.0: int = get;
+  set abs_res.zero.0 mul_neg_one.zero.0;
+  mul_neg_one.neg_one.1: int = const -1;
+  set abs_res.neg_one.0 mul_neg_one.neg_one.1;
+  mul_neg_one.a.1: int = mul mul_neg_one.a.0 mul_neg_one.neg_one.1;
+  set abs_res.a.0 mul_neg_one.a.1;
+.abs_res:
+  abs_res.a.0: int = get;
+  abs_res.neg_one.0: int = get;
+  abs_res.is_neg.0: bool = get;
+  abs_res.zero.0: int = get;
+  ret abs_res.a.0;
+}
+@mod(a: int, b: int): int {
+  entry.mod.0: int = undef;
+  entry.aq.0: int = undef;
+  entry.q.0: int = undef;
+  entry.q.1: int = div a b;
+  entry.aq.1: int = mul b entry.q.1;
+  entry.mod.1: int = sub a entry.aq.1;
+  ret entry.mod.1;
+}
+@gcd(a: int, b: int): int {
+.while.cond:
+  while.cond.b.0: int = id b;
+  set while.body.b.0 while.cond.b.0;
+  set while.finish.b.0 while.cond.b.0;
+  while.cond.a.0: int = id a;
+  set while.body.a.0 while.cond.a.0;
+  set while.finish.a.0 while.cond.a.0;
+  while.cond.is_term.0: bool = undef;
+  while.cond.zero.0: int = undef;
+  while.cond.mod.0: int = undef;
+  while.cond.mod.1: int = call @mod while.cond.a.0 while.cond.b.0;
+  set while.body.mod.0 while.cond.mod.1;
+  set while.finish.mod.0 while.cond.mod.1;
+  while.cond.zero.1: int = const 0;
+  set while.body.zero.0 while.cond.zero.1;
+  set while.finish.zero.0 while.cond.zero.1;
+  while.cond.is_term.1: bool = eq while.cond.mod.1 while.cond.zero.1;
+  set while.body.is_term.0 while.cond.is_term.1;
+  set while.finish.is_term.0 while.cond.is_term.1;
+  br while.cond.is_term.1 .while.finish .while.body;
+.while.body:
+  while.body.b.0: int = get;
+  while.body.a.0: int = get;
+  while.body.is_term.0: bool = get;
+  set while.cond.is_term.0 while.body.is_term.0;
+  while.body.zero.0: int = get;
+  set while.cond.zero.0 while.body.zero.0;
+  while.body.mod.0: int = get;
+  set while.cond.mod.0 while.body.mod.0;
+  while.body.a.1: int = id while.body.b.0;
+  set while.cond.a.0 while.body.a.1;
+  while.body.b.1: int = id while.body.mod.0;
+  set while.cond.b.0 while.body.b.1;
+  jmp .while.cond;
+.while.finish:
+  while.finish.b.0: int = get;
+  while.finish.a.0: int = get;
+  while.finish.is_term.0: bool = get;
+  while.finish.zero.0: int = get;
+  while.finish.mod.0: int = get;
+  ret while.finish.b.0;
+}
+@lcm(a: int, b: int): int {
+  entry.lcm.0: int = undef;
+  set is_good.lcm.0 entry.lcm.0;
+  set check_b.lcm.0 entry.lcm.0;
+  entry.gcdab.0: int = undef;
+  set is_good.gcdab.0 entry.gcdab.0;
+  set check_b.gcdab.0 entry.gcdab.0;
+  entry.ab.0: int = undef;
+  set is_good.ab.0 entry.ab.0;
+  set check_b.ab.0 entry.ab.0;
+  entry.b_is_zero.0: bool = undef;
+  set is_good.b_is_zero.0 entry.b_is_zero.0;
+  set check_b.b_is_zero.0 entry.b_is_zero.0;
+  entry.a_is_zero.0: bool = undef;
+  entry.zero.0: int = undef;
+  entry.zero.1: int = const 0;
+  set is_good.zero.0 entry.zero.1;
+  set check_b.zero.0 entry.zero.1;
+  entry.a_is_zero.1: bool = eq a entry.zero.1;
+  set is_good.a_is_zero.0 entry.a_is_zero.1;
+  set check_b.a_is_zero.0 entry.a_is_zero.1;
+  br entry.a_is_zero.1 .check_b .is_good;
+.check_b:
+  check_b.lcm.0: int = get;
+  set is_good.lcm.0 check_b.lcm.0;
+  set special_case.lcm.0 check_b.lcm.0;
+  check_b.gcdab.0: int = get;
+  set is_good.gcdab.0 check_b.gcdab.0;
+  set special_case.gcdab.0 check_b.gcdab.0;
+  check_b.ab.0: int = get;
+  set is_good.ab.0 check_b.ab.0;
+  set special_case.ab.0 check_b.ab.0;
+  check_b.b_is_zero.0: bool = get;
+  check_b.a_is_zero.0: bool = get;
+  set is_good.a_is_zero.0 check_b.a_is_zero.0;
+  set special_case.a_is_zero.0 check_b.a_is_zero.0;
+  check_b.zero.0: int = get;
+  set is_good.zero.0 check_b.zero.0;
+  set special_case.zero.0 check_b.zero.0;
+  check_b.b_is_zero.1: bool = eq b check_b.zero.0;
+  set is_good.b_is_zero.0 check_b.b_is_zero.1;
+  set special_case.b_is_zero.0 check_b.b_is_zero.1;
+  br check_b.b_is_zero.1 .special_case .is_good;
+.special_case:
+  special_case.lcm.0: int = get;
+  special_case.gcdab.0: int = get;
+  special_case.ab.0: int = get;
+  special_case.b_is_zero.0: bool = get;
+  special_case.a_is_zero.0: bool = get;
+  special_case.zero.0: int = get;
+  ret special_case.zero.0;
+.is_good:
+  is_good.lcm.0: int = get;
+  is_good.gcdab.0: int = get;
+  is_good.ab.0: int = get;
+  is_good.b_is_zero.0: bool = get;
+  is_good.a_is_zero.0: bool = get;
+  is_good.zero.0: int = get;
+  is_good.ab.1: int = mul a b;
+  is_good.ab.2: int = call @abs is_good.ab.1;
+  is_good.gcdab.1: int = call @gcd a b;
+  is_good.lcm.1: int = div is_good.ab.2 is_good.gcdab.1;
+  ret is_good.lcm.1;
+}
+@orders(u: int, n: int, use_lcm: bool) {
+.for.cond:
+  for.cond.u.0: int = id u;
+  set for.body.u.0 for.cond.u.0;
+  set for.finish.u.0 for.cond.u.0;
+  for.cond.one.0: int = undef;
+  set for.body.one.0 for.cond.one.0;
+  set for.finish.one.0 for.cond.one.0;
+  for.cond.gcdun.0: int = undef;
+  set for.body.gcdun.0 for.cond.gcdun.0;
+  set for.finish.gcdun.0 for.cond.gcdun.0;
+  for.cond.ordu.0: int = undef;
+  set for.body.ordu.0 for.cond.ordu.0;
+  set for.finish.ordu.0 for.cond.ordu.0;
+  for.cond.lcm.0: int = undef;
+  set for.body.lcm.0 for.cond.lcm.0;
+  set for.finish.lcm.0 for.cond.lcm.0;
+  for.cond.is_term.0: bool = undef;
+  for.cond.is_term.1: bool = eq for.cond.u.0 n;
+  set for.body.is_term.0 for.cond.is_term.1;
+  set for.finish.is_term.0 for.cond.is_term.1;
+  br for.cond.is_term.1 .for.finish .for.body;
+.for.body:
+  for.body.u.0: int = get;
+  set gcd.u.0 for.body.u.0;
+  set lcm.u.0 for.body.u.0;
+  for.body.one.0: int = get;
+  set gcd.one.0 for.body.one.0;
+  set lcm.one.0 for.body.one.0;
+  for.body.gcdun.0: int = get;
+  set gcd.gcdun.0 for.body.gcdun.0;
+  set lcm.gcdun.0 for.body.gcdun.0;
+  for.body.ordu.0: int = get;
+  set gcd.ordu.0 for.body.ordu.0;
+  set lcm.ordu.0 for.body.ordu.0;
+  for.body.lcm.0: int = get;
+  set gcd.lcm.0 for.body.lcm.0;
+  set lcm.lcm.0 for.body.lcm.0;
+  for.body.is_term.0: bool = get;
+  set gcd.is_term.0 for.body.is_term.0;
+  set lcm.is_term.0 for.body.is_term.0;
+  br use_lcm .lcm .gcd;
+.lcm:
+  lcm.u.0: int = get;
+  set for.body.print.u.0 lcm.u.0;
+  lcm.one.0: int = get;
+  set for.body.print.one.0 lcm.one.0;
+  lcm.gcdun.0: int = get;
+  set for.body.print.gcdun.0 lcm.gcdun.0;
+  lcm.ordu.0: int = get;
+  lcm.lcm.0: int = get;
+  lcm.is_term.0: bool = get;
+  set for.body.print.is_term.0 lcm.is_term.0;
+  lcm.lcm.1: int = call @lcm lcm.u.0 n;
+  set for.body.print.lcm.0 lcm.lcm.1;
+  lcm.ordu.1: int = div lcm.lcm.1 lcm.u.0;
+  set for.body.print.ordu.0 lcm.ordu.1;
+  jmp .for.body.print;
+.gcd:
+  gcd.u.0: int = get;
+  set for.body.print.u.0 gcd.u.0;
+  gcd.one.0: int = get;
+  set for.body.print.one.0 gcd.one.0;
+  gcd.gcdun.0: int = get;
+  gcd.ordu.0: int = get;
+  gcd.lcm.0: int = get;
+  set for.body.print.lcm.0 gcd.lcm.0;
+  gcd.is_term.0: bool = get;
+  set for.body.print.is_term.0 gcd.is_term.0;
+  gcd.gcdun.1: int = call @gcd gcd.u.0 n;
+  set for.body.print.gcdun.0 gcd.gcdun.1;
+  gcd.ordu.1: int = div n gcd.gcdun.1;
+  set for.body.print.ordu.0 gcd.ordu.1;
+.for.body.print:
+  for.body.print.u.0: int = get;
+  for.body.print.one.0: int = get;
+  for.body.print.gcdun.0: int = get;
+  set for.cond.gcdun.0 for.body.print.gcdun.0;
+  for.body.print.ordu.0: int = get;
+  set for.cond.ordu.0 for.body.print.ordu.0;
+  for.body.print.lcm.0: int = get;
+  set for.cond.lcm.0 for.body.print.lcm.0;
+  for.body.print.is_term.0: bool = get;
+  set for.cond.is_term.0 for.body.print.is_term.0;
+  print for.body.print.u.0 for.body.print.ordu.0;
+  for.body.print.one.1: int = const 1;
+  set for.cond.one.0 for.body.print.one.1;
+  for.body.print.u.1: int = add for.body.print.u.0 for.body.print.one.1;
+  set for.cond.u.0 for.body.print.u.1;
+  jmp .for.cond;
+.for.finish:
+  for.finish.u.0: int = get;
+  for.finish.one.0: int = get;
+  for.finish.gcdun.0: int = get;
+  for.finish.ordu.0: int = get;
+  for.finish.lcm.0: int = get;
+  for.finish.is_term.0: bool = get;
+  ret;
+}
+@main(n: int, use_lcm: bool) {
+  entry.n.0: int = id n;
+  entry.u.0: int = undef;
+  entry.zero.0: int = undef;
+  entry.zero.1: int = const 0;
+  entry.u.1: int = const 1;
+  entry.n.1: int = call @abs entry.n.0;
+  print entry.zero.1 entry.u.1;
+  call @orders entry.u.1 entry.n.1 use_lcm;
+}
