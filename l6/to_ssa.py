@@ -54,7 +54,6 @@ def to_ssa(blocks: list[list[[dict]]], func_args: list[dict]) -> list[list[dict]
     # Rename all variables in blocks using the block label + a counter
     ssa_blocks = _rename_vars(blocks)
 
-
     for num, block in enumerate(ssa_blocks):
         label = _get_block_label(block)
 
