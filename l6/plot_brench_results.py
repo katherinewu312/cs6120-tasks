@@ -21,7 +21,8 @@ if __name__ == "__main__":
 
     # Sort the benchmarks by the name of the benchmark file
     benchmarks = list(sorted({benchmark for (benchmark, _, _) in data}))
-    results = []
+    crude_results = []
+    tdce_results = []
 
     for benchmark in benchmarks:
         baseline_result = next(
@@ -29,21 +30,31 @@ if __name__ == "__main__":
             for (bench_name, run, result) in data
             if bench_name == benchmark and run == "baseline"
         )
-        roundtrip_result = next(
+        crude_roundtrip_result = next(
             result
             for (bench_name, run, result) in data
             if bench_name == benchmark and run == "crude-roundtrip"
         )
+        tdce_roundtrip_result = next(
+            result
+            for (bench_name, run, result) in data
+            if bench_name == benchmark and run == "tdce-roundtrip"
+        )
 
-        results.append(compute_percentage(roundtrip_result, baseline_result))
+        crude_results.append(compute_percentage(crude_roundtrip_result, baseline_result))
+        tdce_results.append(compute_percentage(tdce_roundtrip_result, baseline_result))
 
-    avg_increase = round(mean(results) * 100, 2)
-    print(f'Mean increase of {avg_increase}% in instruction count after SSA round trip')
+    avg_crude_increase = round(mean(crude_results) * 100, 2)
+    avg_tdce_increase = round(mean(tdce_results) * 100, 2)
+    print("Mean increase in instruction count:")
+    print(f'Crude roundtrip: {avg_crude_increase}%')
+    print(f'TCDE roundtrip: {avg_tdce_increase}%')
 
     x = range(len(benchmarks))
     plt.figure(figsize=(10, 6))
 
-    plt.scatter(x, results, color="green")
+    plt.scatter(x, crude_results, color="red", label="Crude round-trip", zorder=2)
+    plt.scatter(x, tdce_results, color="green", label="TDCE round trip", zorder=2) 
 
     plt.title(
         "Percentage increase in instruction count after SSA round trip (lower is better)"
@@ -55,6 +66,7 @@ if __name__ == "__main__":
 
     plt.xlabel("Benchmarks")
     plt.ylabel("Percentage")
+    plt.legend()
     plt.grid(zorder=1, linestyle="--", alpha=0.6)
 
     plot_filename = "plot.png"

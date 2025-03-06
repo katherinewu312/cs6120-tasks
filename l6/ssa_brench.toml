@@ -14,3 +14,13 @@ pipeline = [
     "python from_ssa.py",
     "brili -p {args}",
 ]
+
+[runs.tdce-roundtrip]
+pipeline = [
+    "bril2json",
+    "python to_ssa.py",
+    "python from_ssa.py",
+    "python ../l3/tdce.py",
+    "brili -p {args}",
+]
+
