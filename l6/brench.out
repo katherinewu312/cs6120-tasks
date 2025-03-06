@@ -4,11 +4,11 @@ quadratic,crude-roundtrip,5309
 montgomery,baseline,17
 montgomery,crude-roundtrip,47
 primes-between,baseline,574100
-primes-between,crude-roundtrip,incorrect
+primes-between,crude-roundtrip,4433153
 mod_pow,baseline,243
 mod_pow,crude-roundtrip,1408
 orders,baseline,5352
-orders,crude-roundtrip,incorrect
+orders,crude-roundtrip,16936
 sum-check,baseline,5018
 sum-check,crude-roundtrip,17042
 palindrome,baseline,298
@@ -102,4 +102,4 @@ bitwise-ops,crude-roundtrip,7948
 sum-digits,baseline,219
 sum-digits,crude-roundtrip,967
 delannoy,baseline,5748752
-delannoy,crude-roundtrip,timeout
+delannoy,crude-roundtrip,51070876
