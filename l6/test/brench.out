@@ -8,7 +8,7 @@ primes-between,to_ssa,timeout
 mod_pow,baseline,243
 mod_pow,to_ssa,2092
 orders,baseline,5352
-orders,to_ssa,timeout
+orders,to_ssa,23482
 sum-check,baseline,5018
 sum-check,to_ssa,25050
 palindrome,baseline,298
