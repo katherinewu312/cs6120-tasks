@@ -3,7 +3,7 @@
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
-
+from statistics import mean
 
 def compute_percentage(opt, baseline):
     result = abs(baseline - opt) / baseline
@@ -37,6 +37,9 @@ if __name__ == "__main__":
 
         results.append(compute_percentage(roundtrip_result, baseline_result))
 
+    avg_increase = round(mean(results) * 100, 2)
+    print(f'Mean increase of {avg_increase}% in instruction count after SSA round trip')
+
     x = range(len(benchmarks))
     plt.figure(figsize=(10, 6))
 
@@ -54,6 +57,9 @@ if __name__ == "__main__":
     plt.ylabel("Percentage")
     plt.grid(zorder=1, linestyle="--", alpha=0.6)
 
+    plot_filename = "plot.png"
+
     plt.tight_layout()
-    plt.savefig("plot.png")
+    plt.savefig(plot_filename)
+    print(f'Plot saved in {plot_filename}')
     plt.close()
