@@ -2,7 +2,7 @@ import json
 import sys
 from collections import Counter
 
-from cfg import form_basic_blocks, build_cfg
+from cfg import form_basic_blocks, build_cfg, add_entry_block
 
 
 def _get_block_label(block: list[dict]) -> str:
@@ -105,6 +105,7 @@ if __name__ == "__main__":
     program = json.load(sys.stdin)
     for func in program["functions"]:
         bbs = form_basic_blocks(func)
+        bbs = add_entry_block(bbs)
         reachable_bbs = [bb for i, bb in enumerate(bbs) if ("label" in bb[0]) or (i == 0)]
         ssa = to_ssa(reachable_bbs, func.get("args", []))
         func["instrs"] = []
