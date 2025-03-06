@@ -125,6 +125,7 @@ def cfg():
     print('\nCONTROL FLOW GRAPH: ')
     for func in program["functions"]:
         basic_blocks = form_basic_blocks(func)
+        basic_blocks = add_entry_block(basic_blocks)
         lbl_of_idx = map_to_block_name(basic_blocks)
         cfg = build_cfg(basic_blocks)
         readable_cfg = { lbl_of_idx[k]: [lbl_of_idx[v] for v in values] for k, values in cfg.items() }
