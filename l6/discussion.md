@@ -17,6 +17,8 @@ to SSA, we use Turnt to convert to SSA and then evaluate correctness of executio
 are actually in SSA. We ran these checks on both handpicked test cases based on bugs we observed and all of the Bril 
 benchmarks, all of which pass.
 
+From here, the out-of-SSA conversion was straightforward: we simply deleted all 'get' instructions and replaced all 'set x y' instructions with the instruction 'x: type = id y'. Before such deletions and substitutions we made, we first made sure to iterate through the SSA program to obtain a dictionary mapping dest (shadow) variable names to their type for those variables in the 'get' instructions. We tested our out-of-SSA implementation by performing SSA roundtrip tests. We first tested on the examples located in the `bril/examples/ssa_roundtrip` directory to verify that our outputs match with the outputs of the reference implementation. Generalizing, we then performed roundtrip tests on all core benchmarks in bril using brench, counting dynamic instructions and making sure all these tests passed as well.
+
 The scatter plot below illustrates the overhead (in terms of % increase in instruction count) after taking the program on a round-trip through SSA & back. The mean overhead from doing a crude roundtrip (no optimizations) is 413.91%, whereas if we perform TDCE (using our L3 code) after converting back to SSA, the mean overhead is reduced to 121.23%, with 8 of the 50 benchmarks having 0 overhead after the round-trip! We suspect that if we perform more optimizations (e.g. constant propagation), we could reduce the SSA round-trip overhead even more. 
 
 ![](./plot.png)
