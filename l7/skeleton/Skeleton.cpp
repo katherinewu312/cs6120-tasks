@@ -32,11 +32,6 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
 
                         Type* denom_ty = denominator->getType();
 
-                        // Create new labels for cases where denominator == 0 & != 0 
-                        LLVMContext& ctx = builder.getContext();
-                        BasicBlock* denom_is_zero = BasicBlock::Create(ctx, "denom_is_zero");
-                        BasicBlock* denom_non_zero = BasicBlock::Create(ctx, "denom_non_zero");
- 
                         // Integer division
                         if (BO->getOpcode() == Instruction::SDiv || BO->getOpcode() == Instruction::UDiv) {
                             // Found a division instruction
@@ -48,10 +43,23 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                                 // Create an integer comparison instruction
                                 // which checks if the denominator is equal to 0
                                 Constant* zero = ConstantInt::get(denom_ty, 0);
-                                Value* cmpeq = builder.CreateICmpEQ(denominator, zero, "is_zero");
-                                
-                                errs() << "Created a new instruction:\n";
-                                cmpeq->print(errs() , true);
+                                Value* cmp_eq = builder.CreateICmpEQ(denominator, zero, "is_zero");
+
+                                // Create a copy of the original division instruction
+                                // (this will only be executed if the denominator != 0)
+                                Value* div_copy = BO->clone();
+                                div_copy->setName(BO->getName() + "_copy");
+
+                                // Create a select instruction (akin to a ternary operator in C)
+                                Value* select_instr = builder.CreateSelect(cmp_eq, zero, div_copy, "safe_div_result");
+                               
+ 
+                                errs() << "Created new instructions:\n";
+                                cmp_eq->print(errs() , true);
+                                errs() << "\n";
+                                div_copy->print(errs() , true);
+                                errs() << "\n";
+                                select_instr->print(errs(), true);
                                 errs() << "\n";
                             } else {
                                 errs() << "we have an integer division but denominator doesn't have type int!\n";
