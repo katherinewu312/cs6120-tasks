@@ -1,17 +1,14 @@
-# llvm-pass-skeleton
+# Lesson 7: LLVM
 
-A completely useless LLVM pass.
-It's for LLVM 17.
+To build:
+```bash
+$ cd build
+$ cmake ..
+$ make
+$ cd ..
+```
 
-Build:
-
-    $ cd llvm-pass-skeleton
-    $ mkdir build
-    $ cd build
-    $ cmake ..
-    $ make
-    $ cd ..
-
-Run:
-
-    $ clang -fpass-plugin=`echo build/skeleton/SkeletonPass.*` something.c
+When you edit `skeleton.cpp`, run the following to recompile & execute `a.c`:
+```bash
+make -C build && `brew --prefix llvm`/bin/clang -fpass-plugin=build/skeleton/SkeletonPass.dylib a.c
+```
