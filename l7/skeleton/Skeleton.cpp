@@ -75,6 +75,9 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                                     errs() << "\n";
                                 }
 
+                                // Remove the original division instruction
+                                BO->eraseFromParent();
+
                                 // We modified the code, so no analyses are preserved
                                 return PreservedAnalyses::none();
                             } else {
