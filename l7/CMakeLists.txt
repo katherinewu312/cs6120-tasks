@@ -20,3 +20,6 @@ link_directories(${LLVM_LIBRARY_DIRS})
 
 # Our pass lives in this subdirectory.
 add_subdirectory(skeleton)
+
+add_executable(taylor taylor.c)
+add_executable(a a.c)
