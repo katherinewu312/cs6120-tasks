@@ -35,7 +35,7 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                         // Integer division
                         if (BO->getOpcode() == Instruction::SDiv || BO->getOpcode() == Instruction::UDiv) {
                             // Found a division instruction
-                            errs() << "Found integer division : \n";
+                            errs() << "Found integer division: \n";
                             I.print(errs(), true);
                             errs() << "\n";
 
@@ -67,11 +67,19 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                                 // Replace all uses of the original division instruction
                                 // with the safe division instruction created above
                                 for (auto &U : BO->uses()) {
+                                    // Fetch the entire instruction corresponding to the use
                                     User *user = U.getUser();
+
+                                    errs() << "Original use:\n";
+                                    user->print(errs(), true);
+                                    errs() << "\n";
+
+                                    // Update the corresponding operand to use 
+                                    // the result of the safe division instead
                                     user->setOperand(U.getOperandNo(), safe_div_select);
 
-                                    errs() << "Replaced operand in the use-site:\n";
-                                    U->print(errs(), true);
+                                    errs() << "Updated use:\n";
+                                    user->print(errs(), true);
                                     errs() << "\n";
                                 }
 
