@@ -20,31 +20,43 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                     // `dyn_cast<BinaryOperator<&I>` returns null if `I` is not a binop,
                     // and returns the same pointer if it actually is a binop
                     if (auto *BO = dyn_cast<BinaryOperator>(&I)) {
-                        if (BO->getOpcode() == Instruction::FDiv || BO->getOpcode() == Instruction::SDiv || BO->getOpcode() == Instruction::UDiv) {
+                        // Initialize LLVM's IRBuilder with the binary operator
+                        // (this inserts at the point where the instruciton `BO` occurs)
+                        IRBuilder<> builder(BO);
+
+                        // extract the operands of the BO 
+                        // Note: `getOperand` returns the pointer to the 
+                        // instruction that actually produced the operand
+                        Value* numerator = BO->getOperand(0);
+                        Value* denominator = BO->getOperand(1);
+
+                        Type* denom_ty = denominator->getType();
+ 
+                        // Integer division
+                        if (BO->getOpcode() == Instruction::SDiv || BO->getOpcode() == Instruction::UDiv) {
                             // Found a division instruction
-                            errs() << "Found a division in instruction: \n";
+                            errs() << "Found integer division : \n";
                             I.print(errs(), true);
                             errs() << "\n";
 
-                            // Initialize LLVM's IRBuilder with the binary operator
-                            IRBuilder<> builder(BO);
-
-                            // extract the operands of the BO 
-                            // Note: `getOperand` returns the pointer to the 
-                            // instruction that actually produced the operand
-                            Value* dividend = BO->getOperand(0);
-                            Value* divisor = BO->getOperand(1);
-
-                            // TODO: check if `rhs == 0` and add an if...else block
-                            // to prevent division by 0 
-
-
-                            // tell LLVM that none of the previous analyses were preserved
-                            return PreservedAnalyses::none();
-
+                            if (denom_ty->isIntegerTy()) {
+                                Constant* zero = ConstantInt::get(denom_ty, 0);
+                                Value* cmpeq = builder.CreateICmpEQ(denominator, zero, "is_zero");
+                                errs() << "Created a new instruction:\n";
+                                cmpeq->print(errs() , true);
+                                errs() << "\n";
+                            } else {
+                                errs() << "denominator doesn't have type int!\n";
+                            }                            
+                            
+                        } else if (BO->getOpcode() == Instruction::FDiv) {
+                            // floating point division
+    
+                            errs() << "Found integer division : \n";
+                            I.print(errs(), true);
+                            errs() << "\n";
                         }
                     }
-
                 }
             }
         }
