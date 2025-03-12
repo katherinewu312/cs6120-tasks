@@ -20,7 +20,7 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                     // `dyn_cast<BinaryOperator<&I>` returns null if `I` is not a binop,
                     // and returns the same pointer if it actually is a binop
                     if (auto *BO = dyn_cast<BinaryOperator>(&I)) {
-                        if (op->getOpcode() == Instruction::FDiv || op->getOpcode() == Instruction::SDiv || op->getOpcode() == Instruction::UDiv) {
+                        if (BO->getOpcode() == Instruction::FDiv || BO->getOpcode() == Instruction::SDiv || BO->getOpcode() == Instruction::UDiv) {
                             // Found a division instruction
                             errs() << "Found a division in instruction: \n";
                             I.print(errs(), true);
