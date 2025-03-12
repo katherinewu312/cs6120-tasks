@@ -22,7 +22,7 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                     if (auto *BO = dyn_cast<BinaryOperator>(&I)) {
                         // Initialize LLVM's IRBuilder with the binary operator
                         // (this inserts at the point where the instruciton `BO` occurs)
-                        IRBuilder<> builder(BO);
+                        IRBuilder<> builder(BO);                        
 
                         // extract the operands of the BO 
                         // Note: `getOperand` returns the pointer to the 
@@ -31,6 +31,11 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                         Value* denominator = BO->getOperand(1);
 
                         Type* denom_ty = denominator->getType();
+
+                        // Create new labels for cases where denominator == 0 & != 0 
+                        LLVMContext& ctx = builder.getContext();
+                        BasicBlock* denom_is_zero = BasicBlock::Create(ctx, "denom_is_zero");
+                        BasicBlock* denom_non_zero = BasicBlock::Create(ctx, "denom_non_zero");
  
                         // Integer division
                         if (BO->getOpcode() == Instruction::SDiv || BO->getOpcode() == Instruction::UDiv) {
@@ -40,19 +45,22 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                             errs() << "\n";
 
                             if (denom_ty->isIntegerTy()) {
+                                // Create an integer comparison instruction
+                                // which checks if the denominator is equal to 0
                                 Constant* zero = ConstantInt::get(denom_ty, 0);
                                 Value* cmpeq = builder.CreateICmpEQ(denominator, zero, "is_zero");
+                                
                                 errs() << "Created a new instruction:\n";
                                 cmpeq->print(errs() , true);
                                 errs() << "\n";
                             } else {
-                                errs() << "denominator doesn't have type int!\n";
+                                errs() << "we have an integer division but denominator doesn't have type int!\n";
                             }                            
                             
                         } else if (BO->getOpcode() == Instruction::FDiv) {
                             // floating point division
     
-                            errs() << "Found integer division : \n";
+                            errs() << "Found floating-point division : \n";
                             I.print(errs(), true);
                             errs() << "\n";
                         }
