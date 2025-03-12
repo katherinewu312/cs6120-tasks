@@ -12,7 +12,7 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         // Loop over each function in a module
         for (auto &F : M.functions()) {
-            errs() << "I saw a function called " << F.getName() << "!\n";
+            errs() << "Function " << F.getName() << "!\n";
             // Loop over each basic block in a function
             for (auto &B : F) {
                 // Loop over each instruction in a block 
