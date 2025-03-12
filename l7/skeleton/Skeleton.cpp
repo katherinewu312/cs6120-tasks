@@ -46,14 +46,15 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                                 Value* cmp_eq = builder.CreateICmpEQ(denominator, zero, "is_zero");
 
                                 // Create a copy of the original division instruction
-                                // (this will only be executed if the denominator != 0)
-                                Value* div_copy = BO->clone();
+                                // (this will only be executed if the denominator is non-zero)
+                                Instruction* div_copy = BO->clone();
                                 div_copy->setName(BO->getName() + "_copy");
+                                builder.Insert(div_copy);
 
                                 // Create a select instruction (akin to a ternary operator in C)
+                                // This means `cmp_eq ? zero : div_copy`
                                 Value* select_instr = builder.CreateSelect(cmp_eq, zero, div_copy, "safe_div_result");
                                
- 
                                 errs() << "Created new instructions:\n";
                                 cmp_eq->print(errs() , true);
                                 errs() << "\n";
@@ -61,6 +62,8 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                                 errs() << "\n";
                                 select_instr->print(errs(), true);
                                 errs() << "\n";
+
+                                // TODO: replace all uses of BO with the select instruction above
                             } else {
                                 errs() << "we have an integer division but denominator doesn't have type int!\n";
                             }                            
