@@ -1,3 +1,5 @@
 int main(int argc, char** argv) {
-    return argc + 2;	
+    int zero = 0;
+    int result = argc / zero;
+    return result;	
 }
