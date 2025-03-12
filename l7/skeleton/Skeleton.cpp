@@ -51,19 +51,32 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                                 div_copy->setName(BO->getName() + "_copy");
                                 builder.Insert(div_copy);
 
-                                // Create a select instruction (akin to a ternary operator in C)
+                                // Create a select instruction for safe division 
+                                // (LLVM select instructions are akin to C's ternary operators)
                                 // This means `cmp_eq ? zero : div_copy`
-                                Value* select_instr = builder.CreateSelect(cmp_eq, zero, div_copy, "safe_div_result");
+                                Value* safe_div_select = builder.CreateSelect(cmp_eq, zero, div_copy, "safe_div_result");
                                
                                 errs() << "Created new instructions:\n";
                                 cmp_eq->print(errs() , true);
                                 errs() << "\n";
                                 div_copy->print(errs() , true);
                                 errs() << "\n";
-                                select_instr->print(errs(), true);
+                                safe_div_select->print(errs(), true);
                                 errs() << "\n";
 
-                                // TODO: replace all uses of BO with the select instruction above
+                                // Replace all uses of the original division instruction
+                                // with the safe division instruction created above
+                                for (auto &U : BO->uses()) {
+                                    User *user = U.getUser();
+                                    user->setOperand(U.getOperandNo(), safe_div_select);
+
+                                    errs() << "Replaced operand in the use-site:\n";
+                                    U->print(errs(), true);
+                                    errs() << "\n";
+                                }
+
+                                // We modified the code, so no analyses are preserved
+                                return PreservedAnalyses::none();
                             } else {
                                 errs() << "we have an integer division but denominator doesn't have type int!\n";
                             }                            
