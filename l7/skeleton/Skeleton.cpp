@@ -10,16 +10,19 @@ namespace {
 
 struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
+        bool modified = false;
         // Loop over each function in a module
         for (auto &F : M.functions()) {
             errs() << "Function " << F.getName() << "!\n";
             // Loop over each basic block in a function
             for (auto &B : F) {
                 // Loop over each instruction in a block 
-                for (auto &I : B) {
+                for (auto I = B.begin(); I != B.end(); ) {
+                    Instruction &Inst = *I;
+                    ++I;
                     // `dyn_cast<BinaryOperator<&I>` returns null if `I` is not a binop,
                     // and returns the same pointer if it actually is a binop
-                    if (auto *BO = dyn_cast<BinaryOperator>(&I)) {
+                    if (auto *BO = dyn_cast<BinaryOperator>(&Inst)) {
                         // Initialize LLVM's IRBuilder with the binary operator
                         // (this inserts at the point where the instruciton `BO` occurs)
                         IRBuilder<> builder(BO);                        
@@ -40,7 +43,7 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                         if (BO->getOpcode() == Instruction::SDiv || BO->getOpcode() == Instruction::UDiv) {
                             // Found a division instruction
                             errs() << "Found integer division: \n";
-                            I.print(errs(), true);
+                            Inst.print(errs(), true);
                             errs() << "\n";
 
                             if (denom_ty->isIntegerTy()) {
@@ -54,7 +57,7 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                         } else if (BO->getOpcode() == Instruction::FDiv) {
                             // floating point division
                             errs() << "Found floating-point division : \n";
-                            I.print(errs(), true);
+                            Inst.print(errs(), true);
                             errs() << "\n";
 
                             if (denom_ty->isFloatingPointTy()) {
@@ -115,11 +118,14 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                         // Remove the original division instruction
                         BO->eraseFromParent();
 
-                        // We modified the code, so no analyses are preserved
-                        return PreservedAnalyses::none();
+                        // We modified the code
+                        modified = true;
                     }
                 }
             }
+        }
+        if (modified) {
+            return PreservedAnalyses::none();
         }
         return PreservedAnalyses::all();
     };
