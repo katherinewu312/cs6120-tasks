@@ -1,5 +1,10 @@
 # Lesson 7: LLVM
 
+See [`skeleton.cpp`](./skeleton/Skeleton.cpp) for the C++ code containing our LLVM pass. 
+We also have C implementations of [Taylor series](./taylor.c) and 
+a [probabilistic approximation of pi](./pi.c) in this repo for testing purposes.
+
+
 To build:
 ```bash
 $ cd build

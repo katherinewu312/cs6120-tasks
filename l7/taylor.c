@@ -17,8 +17,8 @@ int main() {
   float s, r;
   char c;
 
-  printf("Consider the Taylor series of e^x minus the 1st term: -1 + x/1! + x^2/2! + x^3/3! + x^4/4! ... + x^x/x!");
-  printf("Enter the no. of terms to which you'd like the sum to be computed:");
+  printf("Consider the Taylor series of e^x minus the 1st term: -1 + x/1! + x^2/2! + x^3/3! + x^4/4! ... + x^x/x!\n");
+  printf("Enter the no. of terms to which you'd like the sum to be computed:\n");
   scanf("%d", &x);
   s = 0;
   for (i = 1; i <= x; i++) {
