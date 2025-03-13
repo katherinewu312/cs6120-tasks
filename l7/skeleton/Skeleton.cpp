@@ -68,7 +68,10 @@ struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
                                 cmp_eq = builder.CreateFCmpOEQ(denominator, zero, "is_zero");
                             } else {
                                 errs() << "We have FP division but denominator doesn't have a floating point type!\n";
-                            } 
+                            }
+                        } else {
+                            // Not a division
+                            continue;
                         }
 
                         // Create a copy of the original division instruction
