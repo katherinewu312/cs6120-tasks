@@ -71,11 +71,10 @@ pass has determined that the denominator in the division instruction is 0 and re
 the entire result of the division with 0, and `0 + 2 = 2`, so `main` returns `2`.
 
 **More complicated examples:**         
-To demonstrate that our pass works on larger programs, we have C implementations of [Taylor series](./taylor.c) and 
-a [probabilistic approximation of pi](./pi.c) (the latter is taken from the official LLVM test suite). 
-These files contain multiple division instructions (as opposed to the simple C file above which only has one division), which 
+To demonstrate that our pass works on larger programs, we have C implementations of [Taylor series](./taylor.c), a [probabilistic approximation of pi](./pi.c), and an [n-body simulation](./nbody.c) (the latter two of which are taken from the official LLVM test suite). 
+These latter two files contain multiple division instructions (as opposed to the first simple C file above which only has one division), which 
 helped us realize that we had two bugs in our initial implementation, one where our pass prematurely finishes after updating the first division instructions it sees, and one where we forgot to ignore non-division instructions in our pass. After fixing these bugs, we manually checked
-that the executables produced by `clang` return the same result with and without our pass. Finally, we decided to test our LLVM pass on several image processing examples (such as blurring, dilating, interpolation, etc.), taken from the LLVM test suite as well. Integer or floating point division is used here due to operations such as normalization or image resizing that are particularly important in such image processing tasks.
+that the executables produced by `clang` return the same result with and without our pass.
 
 
 
