@@ -15,7 +15,7 @@ into:
 %12 = fdiv float 5.0, %10
 %13 = select i1 %11, float 0.0, float %12     ; equivalent to the C ternary stmt `%13 = (%11 == 0) ? 0 : %12;`
 ```  
-We support both unsigned/signed int division (`udiv`, `sdiv`) and floating-point division (`fdiv`). 
+We support both unsigned/signed integer division (`udiv`, `sdiv`) and floating-point division (`fdiv`). 
 
 To aid debugging, every time our pass replaces a division instruction with 
 a select instruction, we print to `stdout` the original & new instructions, along with 
@@ -32,6 +32,11 @@ Original use:
 Updated use:
   %29 = fadd float %15, %27
 ```
+
+Implementing this pass was relatively straightforward, although we realized we 
+had to handle integer & floating-point division separately, since LLVM has separate comparison 
+instructions for ints and FPs (`icmp` and `fcmp`). Initially, we naively tried to handle both int & FP cases at the same time, but we quickly realized this was not possible since LLVM instructions are not "polymorphic", i.e. there are different comparison/division instructions for ints/FPs, and LLVM stipulates that arguments' types have to be explicitly stated. When figuring out operands' types, we found the `isIntegerTy` and `isFloatingPointTy` functions in the [`llvm::Type` class](https://llvm.org/doxygen/classllvm_1_1Type.html) to be extremely helpful! The plethora of possible int types in C (`long`, `short`, `unsigned ...`, `signed ...`) are all instances of LLVM's general `IntegerType` (similarly for FP types), so helper functions like `isIntegerTy` remove the need for us to explicitly handle different numeric types in C.
+
 
 **Simple example:**
 Consider this C program which contains a division-by-zero statement:
@@ -67,8 +72,10 @@ the entire result of the division with 0, and `0 + 2 = 2`, so `main` returns `2`
 
 **More complicated examples:**         
 To demonstrate that our pass works on larger programs, we have C implementations of [Taylor series](./taylor.c) and 
-a [probabilistic approximation of pi](./pi.c) (the latter is taken from the official LLVM test suite). We manually checked
-that the executables produced by `clang` return the same result with and without our pass!
+a [probabilistic approximation of pi](./pi.c) (the latter is taken from the official LLVM test suite). 
+These files contain multiple division instructions (as opposed to the simple C file above which only has one division), which 
+helped us realize that we had two bugs in our initial implementation, one where our pass prematurely finishes after updating the first division instructions it sees, and one where we forgot to ignore non-division instructions in our pass. After fixing these bugs, we manually checked
+that the executables produced by `clang` return the same result with and without our pass.
 
 
 
