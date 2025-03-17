@@ -1,5 +1,13 @@
-# cs6120-tasks
+# CS 6120 Tasks
 
+## Repo overview
+- [Lesson 2: Representing Programs](./l2)
+- [Lesson 3: Local Analysis & Optimization](./l3)
+- [Lesson 4: Data Flow](./l4)
+- [Lesson 5: Global Analysis](./l5)
+- [Lesson 6: Static Single Assignment](./l6)
+- [Lesson 7: LLVM](./l7)
+- [Lesson 8: Loop Optimization](./l8)
 
 ## Setting up a Python virtual environment using uv
 
