@@ -2,4 +2,5 @@ build
 -o
 *.out
 *.s
+*.ll
 .DS_Store

@@ -16,6 +16,7 @@ namespace {
 struct LICMPass : public PassInfoMixin<LICMPass> {
     PreservedAnalyses run(Loop &L, LoopAnalysisManager &AM, LoopStandardAnalysisResults &AR, LPMUpdater &U) {
         // Iterate over the loop's blocks
+        errs() << "Inside a loop!\n";
         for (auto *BB : L.blocks()) {
             errs() << "Loop block: " << BB->getName() << "\n";
         }
@@ -29,12 +30,15 @@ struct LICMPass : public PassInfoMixin<LICMPass> {
 extern "C" LLVM_ATTRIBUTE_WEAK ::llvm::PassPluginLibraryInfo
 llvmGetPassPluginInfo() {
   return {.APIVersion = LLVM_PLUGIN_API_VERSION,
-          .PluginName = "LICM pass",
-          .PluginVersion = "v0.2",
+          .PluginName = "LICMPass",
+          .PluginVersion = "v0.1",
           .RegisterPassBuilderCallbacks = [](PassBuilder &PB) {
-            PB.registerPipelineStartEPCallback(
-                [](ModulePassManager &MPM, OptimizationLevel Level) {
-                    MPM.addPass(createModuleToFunctionPassAdaptor(createFunctionToLoopPassAdaptor(LICMPass())));
-                });
+            PB.registerPipelineParsingCallback(
+              [](StringRef name, FunctionPassManager &FPM,
+                ArrayRef<PassBuilder::PipelineElement>) {
+                if (name != "LICMPass") return false;
+                FPM.addPass(createFunctionToLoopPassAdaptor(LICMPass()));
+                return true;
+              });
           }};
 }
