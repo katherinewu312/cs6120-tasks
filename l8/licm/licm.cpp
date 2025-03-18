@@ -14,6 +14,10 @@ using namespace llvm;
 namespace {
 
 struct LICMPass : public PassInfoMixin<LICMPass> {
+    // library functions to look at:
+    // `Loop::hasLoopInvariantOperands`
+    // `LoopBase::getLoopPreheader`
+
     PreservedAnalyses run(Loop &L, LoopAnalysisManager &AM, LoopStandardAnalysisResults &AR, LPMUpdater &U) {
         // Iterate over the loop's blocks
         errs() << "Inside a loop!\n";
