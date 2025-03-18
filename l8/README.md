@@ -5,6 +5,7 @@ See [`licm.cpp`](./licm/licm.cpp) for the C++ code containing our LLVM pass.
 
 To build:
 ```bash
+$ mkdir build
 $ cd build
 $ cmake ..
 $ make
@@ -18,7 +19,7 @@ $ make -C build && `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMP
 
 To see the emitted LLVM code produced by `clang` (with our modifications), run:
 ```bash
-$ `brew --prefix llvm`/bin/clang -fpass-plugin=build/skeleton/SkeletonPass.dylib -emit-llvm -S -o - a.c
+$ `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib -emit-llvm -S -o - a.c
 ```
 
 ## Pass managers
