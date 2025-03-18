@@ -12,7 +12,7 @@ $ make
 $ cd ..
 ```
 
-When you edit `skeleton.cpp`, run the following to recompile & execute `a.c`:
+When you edit `licm.cpp`, run the following to recompile & execute `a.c`:
 ```bash
 $ make -C build && `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib a.c
 ```
