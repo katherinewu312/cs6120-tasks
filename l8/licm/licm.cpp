@@ -32,9 +32,9 @@ llvmGetPassPluginInfo() {
           .PluginName = "LICM pass",
           .PluginVersion = "v0.2",
           .RegisterPassBuilderCallbacks = [](PassBuilder &PB) {
-            PB.registerLoopOptimizerEndEPCallback(
-                [](LoopPassManager &LPM, OptimizationLevel Level) {
-                  LPM.addPass(LICMPass());
+            PB.registerPipelineStartEPCallback(
+                [](ModulePassManager &MPM, OptimizationLevel Level) {
+                    MPM.addPass(createModuleToFunctionPassAdaptor(createFunctionToLoopPassAdaptor(LICMPass())));
                 });
           }};
 }
