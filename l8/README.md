@@ -5,7 +5,6 @@ See [`licm.cpp`](./licm/licm.cpp) for the C++ code containing our LLVM pass.
 
 To build:
 ```bash
-$ mkdir build
 $ cd build
 $ cmake ..
 $ make
@@ -22,6 +21,15 @@ To see the emitted LLVM code produced by `clang` (with our modifications), run:
 $ `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib -emit-llvm -S -o - a.c
 ```
 
+To run the loop pass, we use LLVM [opt](https://rocm.docs.amd.com/projects/llvm-project/en/latest/LLVM/llvm/html/CommandGuide/opt.html):
+```
+$ `brew --prefix llvm`/bin/clang -S -emit-llvm -O0 -Xclang -disable-O0-optnone a.c -o a.ll 
+
+$ `brew --prefix llvm`/bin/opt -load-pass-plugin=build/licm/LICMPass.dylib -passes='LICMPass' a.ll -S > a_opt.ll
+```
+
+The first command compiles the file ```a.c``` into unoptimized LLVM IR and saves it as ```a.ll```. The second command applies the LICM optimization pass to ```a.ll``` and outputs the optimized IR to ```a_opt.ll```.
+
 ## Pass managers
 From the LLVM docs (https://llvm.org/docs/NewPassManager.html):
 
@@ -36,3 +44,5 @@ The TargetMachine::adjustPassManager() function that was used to extend a legacy
 
 Currently there are efforts to make the codegen pipeline work with the new PM.
 ```
+
+[This link](https://discourse.llvm.org/t/how-to-write-a-loop-pass-using-new-pass-manager/70240) was particularly helpful in getting us set up to write a loop pass using the new pass manager.
