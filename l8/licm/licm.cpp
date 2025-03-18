@@ -28,15 +28,13 @@ struct LICMPass : public PassInfoMixin<LICMPass> {
 
 extern "C" LLVM_ATTRIBUTE_WEAK ::llvm::PassPluginLibraryInfo
 llvmGetPassPluginInfo() {
-    return {
-        .APIVersion = LLVM_PLUGIN_API_VERSION,
-        .PluginName = "LICM Pass",
-        .PluginVersion = "v0.1",
-        .RegisterPassBuilderCallbacks = [](PassBuilder &PB) {
-            PB.registerPipelineStartEPCallback(
-                [](ModulePassManager &MPM, OptimizationLevel Level) {
-                    MPM.addPass(LICMPass());
+  return {.APIVersion = LLVM_PLUGIN_API_VERSION,
+          .PluginName = "LICM pass",
+          .PluginVersion = "v0.2",
+          .RegisterPassBuilderCallbacks = [](PassBuilder &PB) {
+            PB.registerLoopOptimizerEndEPCallback(
+                [](LoopPassManager &LPM, OptimizationLevel Level) {
+                  LPM.addPass(LICMPass());
                 });
-        }
-    };
+          }};
 }
