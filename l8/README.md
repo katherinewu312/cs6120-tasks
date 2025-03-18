@@ -1,10 +1,11 @@
 # Lesson 8: Loop Optimizations
 
-See [`skeleton.cpp`](./skeleton/Skeleton.cpp) for the C++ code containing our LLVM pass. 
+See [`licm.cpp`](./licm/licm.cpp) for the C++ code containing our LLVM pass. 
 
 
 To build:
 ```bash
+$ mkdir build
 $ cd build
 $ cmake ..
 $ make
@@ -13,12 +14,12 @@ $ cd ..
 
 When you edit `skeleton.cpp`, run the following to recompile & execute `a.c`:
 ```bash
-$ make -C build && `brew --prefix llvm`/bin/clang -fpass-plugin=build/skeleton/SkeletonPass.dylib a.c
+$ make -C build && `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib a.c
 ```
 
 To see the emitted LLVM code produced by `clang` (with our modifications), run:
 ```bash
-$ `brew --prefix llvm`/bin/clang -fpass-plugin=build/skeleton/SkeletonPass.dylib -emit-llvm -S -o - a.c
+$ `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib -emit-llvm -S -o - a.c
 ```
 
 ## Pass managers
