@@ -26,22 +26,26 @@ struct LICMPass : public PassInfoMixin<LICMPass> {
     PreservedAnalyses run(Loop &L, LoopAnalysisManager &AM, LoopStandardAnalysisResults &AR, LPMUpdater &U) {
         errs() << "Inside a loop!\n";
         BasicBlock *preheader = L.getLoopPreheader();
-        std::list<Instruction *> loop_inv_instrs;
-        // Iterate over the loop's blocks
-        for (auto &BB : L.blocks()) {
-            // Iterate over the block's instructions
-            for (auto &I : *BB) {
-                // Check if instruction is loop invariant and contains no side effects or undefined behavior
-                if (L.hasLoopInvariantOperands(&I) && isSafeToSpeculativelyExecute(&I)) {
-                    loop_inv_instrs.push_back(&I);
+        bool converged = false;
+        while (!converged) {
+            converged = true;
+            std::list<Instruction *> loop_inv_instrs;
+            // Iterate over the loop's blocks
+            for (auto &BB : L.blocks()) {
+                // Iterate over the block's instructions
+                for (auto &I : *BB) {
+                    // Check if instruction is loop invariant and contains no side effects or undefined behavior
+                    if (L.hasLoopInvariantOperands(&I) && isSafeToSpeculativelyExecute(&I)) {
+                        loop_inv_instrs.push_back(&I);
+                        converged = false;
+                    }
                 }
             }
-        }
-
-        // Iterate through all loop invariant instructions and move them to preheader
-        for (auto *I : loop_inv_instrs) {
-            errs() << "Moving loop invariant instruction to preheader: " << *I << "\n";
-            I->moveBefore(preheader->getTerminator());
+            // Iterate through all loop invariant instructions and move them to preheader
+            for (auto *I : loop_inv_instrs) {
+                errs() << "Moving loop invariant instruction to preheader: " << *I << "\n";
+                I->moveBefore(preheader->getTerminator());
+            }
         }
 
         return PreservedAnalyses::none();
