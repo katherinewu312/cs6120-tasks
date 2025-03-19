@@ -17,12 +17,31 @@ struct LICMPass : public PassInfoMixin<LICMPass> {
     // library functions to look at:
     // `Loop::hasLoopInvariantOperands`
     // `LoopBase::getLoopPreheader`
+    // `Instruction::moveBefore`
+
+    // other helpful functions:
+    // `llvm::isSafeToSpeculativelyExecute`
+    // `BasicBlock::getTerminator`
 
     PreservedAnalyses run(Loop &L, LoopAnalysisManager &AM, LoopStandardAnalysisResults &AR, LPMUpdater &U) {
-        // Iterate over the loop's blocks
         errs() << "Inside a loop!\n";
-        for (auto *BB : L.blocks()) {
-            errs() << "Loop block: " << BB->getName() << "\n";
+        BasicBlock *preheader = L.getLoopPreheader();
+        std::list<Instruction *> loop_inv_instrs;
+        // Iterate over the loop's blocks
+        for (auto &BB : L.blocks()) {
+            // Iterate over the block's instructions
+            for (auto &I : *BB) {
+                // Check if instruction is loop invariant and contains no side effects or undefined behavior
+                if (L.hasLoopInvariantOperands(&I) && isSafeToSpeculativelyExecute(&I)) {
+                    loop_inv_instrs.push_back(&I);
+                }
+            }
+        }
+
+        // Iterate through all loop invariant instructions and move them to preheader
+        for (auto *I : loop_inv_instrs) {
+            errs() << "Moving loop invariant instruction to preheader: " << *I << "\n";
+            I->moveBefore(preheader->getTerminator());
         }
 
         return PreservedAnalyses::none();

@@ -1,15 +1,6 @@
 #include <stdio.h>
 
 // Example program to test LICM pass
-int test(int x) {
-    int y = 0;
-    for (int i = 0; i < 10; i++) {
-        int j = 1;  // loop invariant
-        y = y + j;
-    }
-    return y;
-}
-
 int main() {
     int x = 0;
     for (int i = 0; i < 5; i++) {
