@@ -54,15 +54,15 @@ def main():
         run_command(licm_command, capture_output=True)
 
         # Generate LLVM IR for original and optimized versions
-        ll_command = f"{clang} -S -emit-llvm -O0 -Xclang -disable-O0-optnone {c_file} -o a.ll"
+        ll_command = f"{clang} -S -emit-llvm -O0 -Xclang -disable-llvm-passes {c_file} -o a.ll"
         run_command(ll_command, capture_output=True)
 
         opt_command = f"{opt} -load-pass-plugin=build/licm/LICMPass.dylib -passes='mem2reg,LICMPass' a.ll -S > a_opt.ll"
         run_command(opt_command, capture_output=True)
 
         # Measure execution times
-        original_time = measure_execution_time(f"{clang} a.ll && ./a.out", num_runs=args.runs)
-        optimized_time = measure_execution_time(f"{clang} a_opt.ll && ./a.out", num_runs=args.runs)
+        original_time = measure_execution_time(f"{clang} -O0 a.ll && ./a.out", num_runs=args.runs)
+        optimized_time = measure_execution_time(f"{clang} -O0 a_opt.ll && ./a.out", num_runs=args.runs)
 
         results.append((c_file_name, original_time, optimized_time))
 
