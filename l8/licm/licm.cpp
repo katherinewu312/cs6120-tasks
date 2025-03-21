@@ -35,7 +35,7 @@ struct LICMPass : public PassInfoMixin<LICMPass> {
                 // Iterate over the block's instructions
                 for (auto &I : *BB) {
                     // Check if instruction is loop invariant and contains no side effects or undefined behavior
-                    if (L.hasLoopInvariantOperands(&I) && isSafeToSpeculativelyExecute(&I)) {
+                    if (L.hasLoopInvariantOperands(&I) && isSafeToSpeculativelyExecute(&I) && !I.mayReadOrWriteMemory()) {
                         loop_inv_instrs.push_back(&I);
                         converged = false;
                     }
