@@ -14,12 +14,12 @@ $ cd ..
 
 When you edit `licm.cpp`, run the following to recompile & execute `a.c`:
 ```bash
-$ make -C build && `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib a.c
+$ make -C build && `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib licm_base.c
 ```
 
 To see the emitted LLVM code produced by `clang` (with our modifications), run:
 ```bash
-$ `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib -emit-llvm -S -o - a.c
+$ `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib -emit-llvm -S -o - licm_base.c
 ```
 
 To run the loop pass, we use LLVM [opt](https://rocm.docs.amd.com/projects/llvm-project/en/latest/LLVM/llvm/html/CommandGuide/opt.html):

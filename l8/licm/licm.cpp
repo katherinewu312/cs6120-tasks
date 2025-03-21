@@ -18,13 +18,17 @@ struct LICMPass : public PassInfoMixin<LICMPass> {
         errs() << "Inside a loop!\n";
         BasicBlock *preheader = L.getLoopPreheader();
         bool converged = false;
+        std::list<Instruction *> loop_inv_instrs;
         while (!converged) {
             converged = true;
-            std::list<Instruction *> loop_inv_instrs;
             // Iterate over the loop's blocks
             for (auto &BB : L.blocks()) {
                 // Iterate over the block's instructions
                 for (auto &I : *BB) {
+
+                    if (find(loop_inv_instrs.begin(), loop_inv_instrs.end(), &I) != loop_inv_instrs.end()) {
+                        continue;   // Already marked as loop invariant
+                    }
 
                     if (!isa<BinaryOperator>(&I)) {
                         continue;   // Avoid more complicated instructions
@@ -52,29 +56,30 @@ struct LICMPass : public PassInfoMixin<LICMPass> {
                     }
                 }
             }
-            // Iterate through all loop invariant instructions and move them to preheader
-            for (auto *I : loop_inv_instrs) {
-                if (!isSafeToSpeculativelyExecute(I)) {
-                    errs() << "Loop invariant instruction " << *I << " has side effects. Checking it dominates all exits"<< "\n";
-                    SmallVector<BasicBlock *, 8> ExitBlocks;
-                    auto DT = DominatorTree(*I->getParent()->getParent());
-                    L.getExitBlocks(ExitBlocks);
-                    bool dominates_exit_blocks = true;
-                    for (auto &B : ExitBlocks) {
-                        if (DT.dominates(I->getParent(), B)) {
-                            dominates_exit_blocks = false;
-                            break;
-                        }
-                    }
-                    if (!dominates_exit_blocks) {
-                        errs() << "Loop invariant instruction does not dominate all exits. Will not move to preheader.";
-                        continue;
+        }
+        // Iterate through all loop invariant instructions and move them to preheader
+        for (auto *I : loop_inv_instrs) {
+            if (!isSafeToSpeculativelyExecute(I)) {
+                errs() << "Loop invariant instruction " << *I << " has side effects. Checking it dominates all exits"<< "\n";
+                SmallVector<BasicBlock *, 8> ExitBlocks;
+                auto DT = DominatorTree(*I->getParent()->getParent());
+                L.getExitBlocks(ExitBlocks);
+                bool dominates_exit_blocks = true;
+                for (auto &B : ExitBlocks) {
+                    if (!DT.dominates(I, B)) {
+                        dominates_exit_blocks = false;
                     }
                 }
-                errs() << "Moving loop invariant instruction to preheader: " << *I << "\n";
-                I->moveBefore(preheader->getTerminator());
+
+                if (!dominates_exit_blocks) {
+                    errs() << "Loop invariant instruction does not dominate all exits. Will not move to preheader." << "\n";
+                    continue;
+                }
             }
+            errs() << "Moving loop invariant instruction to preheader: " << *I << "\n";
+            I->moveBefore(preheader->getTerminator());
         }
+
 
         return PreservedAnalyses::none();
     }
