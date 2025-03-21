@@ -36,21 +36,26 @@ struct LICMPass : public PassInfoMixin<LICMPass> {
 
                     // Check if all operands to the instruction were defined 
                     // outside the loop. If so, we can move the instruction out of the loop
-                    bool defs_outside_loop = true;
+                    bool loop_inv = true;
                     for (auto &O: I.operands()) {
                         // Constants and operands that aren't instructions are fine
                         if (isa<Constant>(&O) || !isa<Instruction>(&O)) {
                             continue;
                         }
                         // If the instruction that defined the operand isn't 
-                        // in the loop, then `defs_outside_loop` remains `true`
+                        // in the loop, then `loop_inv` remains `true`
                         if (!L.contains(dyn_cast<Instruction>(&O)->getParent())) {
                             continue;
                         }
-                        defs_outside_loop = false;
+                        // If the instruction that defined the operand is already marked as loop invariant the
+                        // instruction is also loop invariant
+                        if (find(loop_inv_instrs.begin(), loop_inv_instrs.end(), dyn_cast<Instruction>(&O)) != loop_inv_instrs.end()) {
+                            continue;
+                        }
+                        loop_inv = false;
                     }
 
-                    if (defs_outside_loop) {
+                    if (loop_inv) {
                         loop_inv_instrs.push_back(&I);
                         converged = false;
                     }
