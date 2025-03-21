@@ -12,7 +12,8 @@ def run_command(command, capture_output=False):
             result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
             return result.stdout.strip()
         else:
-            subprocess.run(command, shell=True, check=True)
+            # Suppress output and errors by redirecting to /dev/null
+            subprocess.run(command, shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
         print(f"Error running command: {command}\n{e}")
         exit(1)
@@ -20,7 +21,7 @@ def run_command(command, capture_output=False):
 def measure_execution_time(command):
     """Measures the wall clock time of a command."""
     start_time = time.time()
-    subprocess.run(command, shell=True, check=True)
+    subprocess.run(command, shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     end_time = time.time()
     return end_time - start_time
 
@@ -30,7 +31,7 @@ def main():
     clang = f"{llvm_prefix}/bin/clang"
     opt = f"{llvm_prefix}/bin/opt"
 
-    # Ensure build directory exists and is ready
+    # Ensure build directory exists and is ready (no output shown)
     run_command("make -C build")
 
     # Store results
@@ -38,21 +39,20 @@ def main():
 
     for c_file in benchmark_dir.glob("*.c"):
         c_file_name = c_file.name
+        print(f"Processing {c_file.name}...")
 
-        print(f"Processing {c_file_name}...")
-
-        # Compile with LICM Pass
+        # Compile with LICM Pass (no output shown)
         licm_command = f"{clang} -fpass-plugin=build/licm/LICMPass.dylib {c_file}"
         run_command(licm_command)
 
-        # Generate LLVM IR for original and optimized versions
+        # Generate LLVM IR for original and optimized versions (no output shown)
         ll_command = f"{clang} -S -emit-llvm -O0 -Xclang -disable-O0-optnone {c_file} -o a.ll"
         run_command(ll_command)
 
         opt_command = f"{opt} -load-pass-plugin=build/licm/LICMPass.dylib -passes='mem2reg,LICMPass' a.ll -S > a_opt.ll"
         run_command(opt_command)
 
-        # Measure execution times
+        # Measure execution times (suppress output)
         original_time = measure_execution_time(f"{clang} a.ll && ./a.out")
         optimized_time = measure_execution_time(f"{clang} a_opt.ll && ./a.out")
 
