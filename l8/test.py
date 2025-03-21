@@ -51,14 +51,14 @@ def main():
 
         # Compile with LICM Pass
         licm_command = f"{clang} -fpass-plugin=build/licm/LICMPass.dylib {c_file}"
-        run_command(licm_command)
+        run_command(licm_command, capture_output=True)
 
         # Generate LLVM IR for original and optimized versions
         ll_command = f"{clang} -S -emit-llvm -O0 -Xclang -disable-O0-optnone {c_file} -o a.ll"
-        run_command(ll_command)
+        run_command(ll_command, capture_output=True)
 
         opt_command = f"{opt} -load-pass-plugin=build/licm/LICMPass.dylib -passes='mem2reg,LICMPass' a.ll -S > a_opt.ll"
-        run_command(opt_command)
+        run_command(opt_command, capture_output=True)
 
         # Measure execution times
         original_time = measure_execution_time(f"{clang} a.ll && ./a.out", num_runs=args.runs)
