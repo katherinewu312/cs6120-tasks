@@ -12,24 +12,24 @@ $ make
 $ cd ..
 ```
 
-When you edit `licm.cpp`, run the following to recompile & execute `a.c`:
+When you edit `licm.cpp`, run the following to recompile & execute `test/licm_base.c`:
 ```bash
-$ make -C build && `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib licm_base.c
+$ make -C build && `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib test/licm_base.c
 ```
 
 To see the emitted LLVM code produced by `clang` (with our modifications), run:
 ```bash
-$ `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib -emit-llvm -S -o - licm_base.c
+$ `brew --prefix llvm`/bin/clang -fpass-plugin=build/licm/LICMPass.dylib -emit-llvm -S -o - test/licm_base.c
 ```
 
 To run the loop pass, we use LLVM [opt](https://rocm.docs.amd.com/projects/llvm-project/en/latest/LLVM/llvm/html/CommandGuide/opt.html):
 ```
-$ `brew --prefix llvm`/bin/clang -S -emit-llvm -O0 -Xclang -disable-O0-optnone a.c -o a.ll 
+$ `brew --prefix llvm`/bin/clang -S -emit-llvm -O0 -Xclang -disable-O0-optnone test/licm_base.c -o licm_base.ll 
 
-$ `brew --prefix llvm`/bin/opt -load-pass-plugin=build/licm/LICMPass.dylib -passes='LICMPass' a.ll -S > a_opt.ll
+$ `brew --prefix llvm`/bin/opt -load-pass-plugin=build/licm/LICMPass.dylib -passes='LICMPass' licm_base.ll -S > licm_base_opt.ll
 ```
 
-The first command compiles the file ```a.c``` into unoptimized LLVM IR and saves it as ```a.ll```. The second command applies the LICM optimization pass to ```a.ll``` and outputs the optimized IR to ```a_opt.ll```.
+The first command compiles the file `licm_base.c` into unoptimized LLVM IR and saves it as `licm_base.ll`. The second command applies the LICM optimization pass to `licm_base.ll` and outputs the optimized IR to `licm_base_opt.ll`.
 
 ## Pass managers
 From the LLVM docs (https://llvm.org/docs/NewPassManager.html):
