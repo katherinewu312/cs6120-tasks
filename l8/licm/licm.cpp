@@ -30,7 +30,12 @@ struct LICMPass : public PassInfoMixin<LICMPass> {
                         continue;   // Already marked as loop invariant
                     }
 
-                    if (!(isa<BinaryOperator>(&I) || isa<GetElementPtrInst>(&I))) {
+                    bool is_simple_inst = (isa<BinaryOperator>(&I) 
+                      || isa<GetElementPtrInst>(&I) 
+                      || isa<CmpInst>(&I) 
+                      || isa<UnaryOperator>(&I));
+
+                    if (!is_simple_inst) {
                         continue;   // Avoid more complicated instructions
                     }
 
