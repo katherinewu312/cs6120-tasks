@@ -3,9 +3,10 @@
 // Example program to test LICM pass
 int main() {
     int x = 0;
+    int a = 4;
+    int b = 2;
     for (int i = 0; i < 5; i++) {
-        int j = 2;  // loop invariant
-        x = x + j;
+        x = x + a*b;
     }
     printf("x = %d\n", x);
     return 0;
