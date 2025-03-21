@@ -49,20 +49,22 @@ def main():
         c_file_name = c_file.name
         print(f"Processing {c_file.name}...")
 
-        # Compile with LICM Pass
-        licm_command = f"{clang} -fpass-plugin=build/licm/LICMPass.dylib {c_file}"
-        run_command(licm_command, capture_output=True)
-
         # Generate LLVM IR for original and optimized versions
-        ll_command = f"{clang} -S -emit-llvm -O0 -Xclang -disable-llvm-passes {c_file} -o a.ll"
+        ll_command = f"{clang} -S -emit-llvm -O0 -Xclang -disable-O0-optnone {c_file} -o a.ll"
         run_command(ll_command, capture_output=True)
 
-        opt_command = f"{opt} -load-pass-plugin=build/licm/LICMPass.dylib -passes='mem2reg,LICMPass' a.ll -S > a_opt.ll"
+        m2r_command = f"{opt} -passes=mem2reg a.ll -S -o a.ll"
+        run_command(m2r_command, capture_output=True)
+
+        opt_command = f"{opt} -load-pass-plugin=build/licm/LICMPass.dylib -passes='LICMPass' a.ll -S > a_opt.ll"
         run_command(opt_command, capture_output=True)
 
+        run_command(f"{clang} -O0 a.ll -o a.out")
+        run_command(f"{clang} -O0 a_opt.ll -o a_opt.out")
+
         # Measure execution times
-        original_time = measure_execution_time(f"{clang} -O0 a.ll && ./a.out", num_runs=args.runs)
-        optimized_time = measure_execution_time(f"{clang} -O0 a_opt.ll && ./a.out", num_runs=args.runs)
+        original_time = measure_execution_time("./a.out", num_runs=args.runs)
+        optimized_time = measure_execution_time(f"./a_opt.out", num_runs=args.runs)
 
         results.append((c_file_name, original_time, optimized_time))
 

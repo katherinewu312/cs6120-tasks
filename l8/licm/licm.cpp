@@ -30,7 +30,7 @@ struct LICMPass : public PassInfoMixin<LICMPass> {
                         continue;   // Already marked as loop invariant
                     }
 
-                    if (!isa<BinaryOperator>(&I)) {
+                    if (!(isa<BinaryOperator>(&I) || isa<GetElementPtrInst>(&I))) {
                         continue;   // Avoid more complicated instructions
                     }
 
@@ -39,7 +39,7 @@ struct LICMPass : public PassInfoMixin<LICMPass> {
                     bool loop_inv = true;
                     for (auto &O: I.operands()) {
                         // Constants and operands that aren't instructions are fine
-                        if (isa<Constant>(&O) || !isa<Instruction>(&O)) {
+                        if (isa<Constant>(&O) || !isa<Instruction>(&O) || isa<Argument>(&O)) {
                             continue;
                         }
                         // If the instruction that defined the operand isn't 
