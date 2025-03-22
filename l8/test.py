@@ -45,7 +45,7 @@ def main():
     # Store results
     results = []
 
-    for c_file in benchmark_dir.glob("*.c"):
+    for c_file in benchmark_dir.glob("n-body.c"):
         c_file_name = c_file.name
         print(f"Processing {c_file.name}...")
 
