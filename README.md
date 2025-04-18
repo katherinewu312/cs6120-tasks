@@ -8,6 +8,23 @@
 - [Lesson 6: Static Single Assignment](./l6)
 - [Lesson 7: LLVM](./l7)
 - [Lesson 8: Loop Optimization](./l8)
+- [Lesson 12: Dynamic Compilers](./l12)
+
+## Setting up a TypeScript environment (for L12)
+Install the TypeScript compiler globally (`-g`) on your machine by doing:
+```bash
+$ npm install -g typescript
+```
+Check whether TypeScript is installed by doing:
+```bash
+$ tsc --version
+```
+(Also make sure the JS runtime [Deno](https://docs.deno.com/runtime/) is installed -- this should already be done already.)
+
+To compile / run a TypeScript file, just do:
+```bash
+$ deno <.ts file>
+```
 
 ## Setting up a Python virtual environment using uv
 
