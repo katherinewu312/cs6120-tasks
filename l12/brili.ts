@@ -190,7 +190,9 @@ function typeCheck(val: Value, typ: bril.Type): boolean {
 function typeCmp(lhs: bril.Type, rhs: bril.Type): boolean {
   if (lhs === "any" || rhs === "any") {
     return true;
-  } else if (lhs === "int" || lhs == "bool" || lhs == "float" || lhs == "char") {
+  } else if (
+    lhs === "int" || lhs == "bool" || lhs == "float" || lhs == "char"
+  ) {
     return lhs == rhs;
   } else {
     if (typeof rhs === "object" && Object.hasOwn(rhs, "ptr")) {
@@ -349,6 +351,9 @@ type State = {
 
   // For speculation: the state at the point where speculation began.
   specparent: State | null;
+
+  // Extra field to indicate whether we're currently in tracing mode
+  currentlyTracing: boolean;
 };
 
 /**
@@ -394,6 +399,7 @@ function evalCall(instr: bril.Operation, state: State): Action {
     icount: state.icount,
     ssaEnv: new Map(),
     specparent: null, // Speculation not allowed.
+    currentlyTracing: false,
   };
   const retVal = evalFunc(func, newState);
   state.icount = newState.icount;
@@ -447,8 +453,8 @@ function evalCall(instr: bril.Operation, state: State): Action {
  * instruction or "end" to terminate the function.
  */
 function evalInstr(instr: bril.Instruction, state: State): Action {
-
   console.log(JSON.stringify(instr));
+
   state.icount += BigInt(1);
 
   // Check that we have the right number of arguments.
@@ -659,6 +665,41 @@ function evalInstr(instr: bril.Instruction, state: State): Action {
 
     case "br": {
       const cond = getBool(instr, state.env, 0);
+
+      // If we're currently tracing, emit a guard instruction (eliminate branches)
+      if (state.currentlyTracing) {
+        // Use the exclamation mark to tell the TS compiler that the `args`
+        // field is definitely present in `instr`
+        const b: string = instr.args![0];
+
+        // Create an argument for the guard instruction
+        // If `cond = true`, `arg = b`, otherwise `arg = b.false`
+        let arg: string;
+        if (cond) {
+          arg = b;
+        } else {
+          // If `cond` is false, emit a new instruction
+          // `b.false : bool = const false;`
+          arg = b + ".false";
+          const constFalse: bril.Constant = {
+            op: "const",
+            value: false,
+            dest: arg,
+            type: "bool"
+          };
+          console.log(JSON.stringify(constFalse))
+        }
+        // Construct the actual guard instruction
+        const guard: bril.EffectOperation = {
+          op: "guard",
+          args: [arg],
+          // TODO: figure out what label to supply to the guard if `cond = false`
+          labels: []
+        }
+        console.log(JSON.stringify(guard))
+      }
+
+
       if (cond) {
         return { "action": "jump", "label": getLabel(instr, 0) };
       } else {
@@ -1002,6 +1043,7 @@ function evalProg(prog: bril.Program) {
     icount: BigInt(0),
     ssaEnv: new Map(),
     specparent: null,
+    currentlyTracing: false,
   };
   evalFunc(main, state);
 
