@@ -353,6 +353,8 @@ type State = {
   specparent: State | null;
 
   // Extra field to indicate whether we're currently in tracing mode
+  // By default, `currentlyTracing = false` whenever a new `State` object is created
+  // TODO: figure out when to set `currentlyTracing = true`
   currentlyTracing: boolean;
 };
 
@@ -660,6 +662,7 @@ function evalInstr(instr: bril.Instruction, state: State): Action {
     }
 
     case "jmp": {
+      // TODO: figure out how to eliminate jumps when we're tracing
       return { "action": "jump", "label": getLabel(instr, 0) };
     }
 
