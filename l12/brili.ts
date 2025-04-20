@@ -674,6 +674,9 @@ function evalInstr(instr: bril.Instruction, state: State): Action {
         // Use the exclamation mark to tell the TS compiler that the `args`
         // field is definitely present in `instr`
         const b: string = instr.args![0];
+        
+        // Extract the false label of the branch instruction
+        const falseLabel: string = instr.labels![1];
 
         // Create an argument for the guard instruction
         // If `cond = true`, `arg = b`, otherwise `arg = b.false`
@@ -693,11 +696,11 @@ function evalInstr(instr: bril.Instruction, state: State): Action {
           console.log(JSON.stringify(constFalse))
         }
         // Construct the actual guard instruction
+        // (If arg is false, we jump to `falseLabel`)
         const guard: bril.EffectOperation = {
           op: "guard",
           args: [arg],
-          // TODO: figure out what label to supply to the guard if `cond = false`
-          labels: []
+          labels: [falseLabel]
         }
         console.log(JSON.stringify(guard))
       }
