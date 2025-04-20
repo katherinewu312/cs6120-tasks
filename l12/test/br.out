@@ -1,0 +1,6 @@
+{"dest":"v","op":"const","type":"int","value":4}
+{"dest":"b","op":"const","type":"bool","value":false}
+{"args":["b"],"labels":["there","here"],"op":"br"}
+{"dest":"v","op":"const","type":"int","value":2}
+{"args":["v"],"op":"print"}
+2

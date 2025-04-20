@@ -448,8 +448,6 @@ function evalCall(instr: bril.Operation, state: State): Action {
  */
 function evalInstr(instr: bril.Instruction, state: State): Action {
 
-  // TODO: do something with `instr` here (e.g. `console.log(JSON.stringify(instr)));`)
-
   console.log(JSON.stringify(instr));
   state.icount += BigInt(1);
 
