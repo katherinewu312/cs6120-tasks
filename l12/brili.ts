@@ -164,6 +164,8 @@ const UNDEF = Symbol("undef");
 type Value = boolean | bigint | Pointer | number | string | typeof UNDEF;
 type Env = Map<bril.Ident, Value>;
 
+const TRACE_LENGTH = 100;
+
 /**
  * Check whether a run-time value matches the given static type.
  */
@@ -352,10 +354,10 @@ type State = {
   // For speculation: the state at the point where speculation began.
   specparent: State | null;
 
-  // Extra field to indicate whether we're currently in tracing mode
+  // Extra fields to track tracing
   // By default, `currentlyTracing = false` whenever a new `State` object is created
-  // TODO: figure out when to set `currentlyTracing = true`
   currentlyTracing: boolean;
+  traceCount: bigint;
 };
 
 /**
@@ -402,6 +404,7 @@ function evalCall(instr: bril.Operation, state: State): Action {
     ssaEnv: new Map(),
     specparent: null, // Speculation not allowed.
     currentlyTracing: false,
+    traceCount: state.traceCount
   };
   const retVal = evalFunc(func, newState);
   state.icount = newState.icount;
@@ -455,7 +458,6 @@ function evalCall(instr: bril.Operation, state: State): Action {
  * instruction or "end" to terminate the function.
  */
 function evalInstr(instr: bril.Instruction, state: State): Action {
-  console.log(JSON.stringify(instr));
 
   state.icount += BigInt(1);
 
@@ -693,7 +695,7 @@ function evalInstr(instr: bril.Instruction, state: State): Action {
             dest: arg,
             type: "bool"
           };
-          console.log(JSON.stringify(constFalse))
+          Deno.writeTextFile("trace.txt", JSON.stringify(constFalse) + "\n", {append: true});
         }
         // Construct the actual guard instruction
         // (If arg is false, we jump to `falseLabel`)
@@ -702,7 +704,7 @@ function evalInstr(instr: bril.Instruction, state: State): Action {
           args: [arg],
           labels: [falseLabel]
         }
-        console.log(JSON.stringify(guard))
+        Deno.writeTextFile("trace.txt", JSON.stringify(guard) + "\n", {append: true});
       }
 
 
@@ -879,10 +881,21 @@ function evalInstr(instr: bril.Instruction, state: State): Action {
 }
 
 function evalFunc(func: bril.Function, state: State): Value | null {
+  let currentlyTracing = false;
+  if (func.name == "main") {
+    state.currentlyTracing = true;
+    Deno.writeTextFile("trace.txt", "");
+  }
   for (let i = 0; i < func.instrs.length; ++i) {
     const line = func.instrs[i];
     if ("op" in line) {
       // Run an instruction.
+      if (state.currentlyTracing){
+        if (++state.traceCount > TRACE_LENGTH) {
+          state.currentlyTracing = false;
+        }
+        Deno.writeTextFile("trace.txt", func.name + ":" + i + "," + JSON.stringify(line) + "\n", {append: true});
+      }
       const action = evalInstr(line, state);
 
       // Take the prescribed action.
@@ -1050,6 +1063,7 @@ function evalProg(prog: bril.Program) {
     ssaEnv: new Map(),
     specparent: null,
     currentlyTracing: false,
+    traceCount: BigInt(0)
   };
   evalFunc(main, state);
 

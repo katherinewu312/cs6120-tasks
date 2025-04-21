@@ -1,1 +1,1 @@
-command = "bril2json < {filename} | deno ../brili.ts"
+command = "bril2json < {filename} | deno --allow-write=trace.txt ../brili.ts"
