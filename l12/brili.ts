@@ -890,13 +890,14 @@ function evalFunc(func: bril.Function, state: State): Value | null {
     const line = func.instrs[i];
     if ("op" in line) {
       // Run an instruction.
-      if (state.currentlyTracing){
+      const action = evalInstr(line, state);
+
+      if (state.currentlyTracing && action.action != "jump"){
         if (++state.traceCount > TRACE_LENGTH) {
           state.currentlyTracing = false;
         }
         Deno.writeTextFile("trace.txt", func.name + ":" + i + "," + JSON.stringify(line) + "\n", {append: true});
       }
-      const action = evalInstr(line, state);
 
       // Take the prescribed action.
       switch (action.action) {
