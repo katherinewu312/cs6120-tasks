@@ -702,7 +702,7 @@ function evalInstr(instr: bril.Instruction, state: State): Action {
         const guard: bril.EffectOperation = {
           op: "guard",
           args: [arg],
-          labels: [falseLabel]
+          labels: ["hotpathfail"]
         }
         Deno.writeTextFile("trace.txt", "guard:-1," + JSON.stringify(guard) + "\n", {append: true});
       }

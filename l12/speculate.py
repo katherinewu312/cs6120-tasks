@@ -18,7 +18,7 @@ if __name__ == "__main__":
     traces = {}
     for l in trace_lines:
         pc = l[:l.find(",")]
-        instr = l[l.find(",")+1:]
+        instr = json.loads(l[l.find(",")+1:])
         parsed_pc = pc.split(":")
         func = parsed_pc[0]
         i = int(parsed_pc[1])
@@ -49,11 +49,26 @@ if __name__ == "__main__":
             instrs.append(instr)
 
     hot_trace = trace_counter.most_common()[0][0]
-    trace_start_pc = hot_trace[0]
     pc_to_index = [i for i, instr in enumerate(funcs["main"]) if "label" not in instr]
-    trace_start_index = pc_to_index[trace_start_pc]
+    trace_to_stitch = traces[hot_trace]
+    stitched_instrs = funcs["main"].copy()
+    trace_start_index = pc_to_index[hot_trace[0]]
+    trace_end_index = pc_to_index[hot_trace[-1]]
 
+    stitched_instrs.insert(trace_end_index, {"label": "hotpathsuccess"})
 
+    trace_to_stitch.insert(0, {"op": "speculate"})
+    trace_to_stitch.append({"op": "commit"})
+    trace_to_stitch.append({"op": "jmp", "labels": ["hotpathsuccess"]})
+    trace_to_stitch.append({"label": "hotpathfail"})
 
+    stitched_instrs[trace_start_index-1:trace_start_index-1] = trace_to_stitch
+    for func in program["functions"]:
+        if func["name"] == "main":
+            func["instrs"] = stitched_instrs
+
+    # print(stitched_instrs)
+
+    json.dump(program, sys.stdout, indent=2)
 
 
