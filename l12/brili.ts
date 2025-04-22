@@ -164,7 +164,7 @@ const UNDEF = Symbol("undef");
 type Value = boolean | bigint | Pointer | number | string | typeof UNDEF;
 type Env = Map<bril.Ident, Value>;
 
-const TRACE_LENGTH = 100;
+const TRACE_LENGTH = 1000;
 
 /**
  * Check whether a run-time value matches the given static type.
@@ -695,7 +695,7 @@ function evalInstr(instr: bril.Instruction, state: State): Action {
             dest: arg,
             type: "bool"
           };
-          Deno.writeTextFile("trace.txt", JSON.stringify(constFalse) + "\n", {append: true});
+          Deno.writeTextFile("trace.txt", "guard:-1," + JSON.stringify(constFalse) + "\n", {append: true});
         }
         // Construct the actual guard instruction
         // (If arg is false, we jump to `falseLabel`)
@@ -704,7 +704,7 @@ function evalInstr(instr: bril.Instruction, state: State): Action {
           args: [arg],
           labels: [falseLabel]
         }
-        Deno.writeTextFile("trace.txt", JSON.stringify(guard) + "\n", {append: true});
+        Deno.writeTextFile("trace.txt", "guard:-1," + JSON.stringify(guard) + "\n", {append: true});
       }
 
 
