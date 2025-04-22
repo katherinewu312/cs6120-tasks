@@ -12,6 +12,8 @@ if __name__ == "__main__":
     funcs = {f["name"]: f["instrs"] for f in program["functions"]}
     trace_lines = args.trace.read_text().splitlines()
 
+    # Every time there's aa backedge, we start a new sequence of PCs
+    # We count which sequence of PCs separated by a backedge happens most frequently
     pc_seq = []
     instrs = []
     trace_counter = Counter()
@@ -23,8 +25,9 @@ if __name__ == "__main__":
         func = parsed_pc[0]
         i = int(parsed_pc[1])
 
-        # We don't handle function calls
-        if func not in ["main", "guard"]:
+        # Truncate the candidate sequences of PCs when we encounter a function call,
+        # or if we see an effect operation like print / ret
+        if func not in ["main", "guard"] or instr["op"] in ("print", "ret"):
             if len(pc_seq) > 0:
                 trace_counter[tuple(pc_seq)] += 1
                 traces[tuple(pc_seq)] = instrs
