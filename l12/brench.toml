@@ -9,6 +9,9 @@ pipeline = [
 
 # TODO: figure out how to avoid hard-coding `trace.txt` 
 # as an arg to `speculate.py`
+
+# Note: Brench reports `br.bril` as being correct under the `speculate`
+# workflow because `br.bril` doesn't have loops in it
 [runs.speculate]
 pipeline = [
     "bril2json",
