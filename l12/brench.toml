@@ -1,0 +1,17 @@
+extract = 'total_dyn_inst: (\d+)'
+benchmarks = 'test/*.bril'
+
+[runs.baseline]
+pipeline = [
+    "bril2json",
+    "brili -p {args}",
+]
+
+# TODO: figure out how to avoid hard-coding `trace.txt` 
+# as an arg to `speculate.py`
+[runs.speculate]
+pipeline = [
+    "bril2json",
+    "python3 speculate.py test/trace.txt",
+    "brili -p {args}",
+]
