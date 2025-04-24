@@ -4,6 +4,6 @@ factors,speculate,72
 perfect,baseline,232
 perfect,speculate,342
 while,baseline,28
-while,speculate,incorrect
+while,speculate,53
 br,baseline,5
-br,speculate,incorrect
+br,speculate,10

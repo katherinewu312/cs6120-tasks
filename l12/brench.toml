@@ -1,3 +1,5 @@
+# Run with `brench -j 1 brench.toml > brench.out`
+
 extract = 'total_dyn_inst: (\d+)'
 benchmarks = 'test/*.bril'
 
@@ -6,9 +8,6 @@ pipeline = [
     "bril2json",
     "brili -p {args}",
 ]
-
-# Seems like running brench on dynamically changing files cause nondeterministic results in brench.out, 
-# even though the benchmarks are correct when testing manually
 
 [runs.speculate]
 pipeline = [
