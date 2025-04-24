@@ -59,8 +59,8 @@ if __name__ == "__main__":
             if len(pc_seq) > 0:
                 trace_counter[tuple(pc_seq)] += 1
                 traces[tuple(pc_seq)] = instrs
-                pc_seq = [i]
-                instrs = [instr]
+                pc_seq = []
+                instrs = []
             else:
                 continue
 
@@ -72,8 +72,8 @@ if __name__ == "__main__":
         elif len(pc_seq) > 0 and i < pc_seq[-1]:
             trace_counter[tuple(pc_seq)] += 1
             traces[tuple(pc_seq)] = instrs
-            pc_seq = [i]
-            instrs = [instr]
+            pc_seq = []
+            instrs = []
         # Trace continues
         else:
             pc_seq.append(i)

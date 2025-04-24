@@ -1,9 +1,9 @@
 benchmark,run,result
 factors,baseline,72
-factors,speculate,72
+factors,speculate,84
 perfect,baseline,232
-perfect,speculate,342
+perfect,speculate,320
 while,baseline,28
-while,speculate,53
+while,speculate,48
 br,baseline,5
-br,speculate,10
+br,speculate,11
