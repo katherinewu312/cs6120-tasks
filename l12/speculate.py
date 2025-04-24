@@ -81,20 +81,11 @@ if __name__ == "__main__":
 
     hot_trace = trace_counter.most_common()[0][0]
     pc_to_index = [i for i, instr in enumerate(funcs["main"]) if "label" not in instr]
-    num_labels = len([i for i, instr in enumerate(funcs["main"]) if "label" in instr and i <= hot_trace[-1]])
-    
     trace_to_stitch = traces[hot_trace]
-    # print([i for i, instr in enumerate(funcs["main"]) if "label" in instr])
-    # print(num_labels)
-    # print(hot_trace)
-    # print(pc_to_index)
-    # print(traces)
-    # print(trace_to_stitch)
-    
     
     stitched_instrs = funcs["main"].copy()
-    trace_start_index = pc_to_index[hot_trace[0]]
-    trace_end_index = pc_to_index[hot_trace[-1] - (num_labels-1)] # adjust index based on skipped labels in pc_to_index
+    trace_start_index = hot_trace[0]
+    trace_end_index = hot_trace[-1] + 1
 
     stitched_instrs.insert(trace_end_index, {"label": "hotpathsuccess"})
 
@@ -103,7 +94,7 @@ if __name__ == "__main__":
     trace_to_stitch.append({"op": "jmp", "labels": ["hotpathsuccess"]})
     trace_to_stitch.append({"label": "hotpathfail"})
 
-    stitched_instrs[trace_start_index-1:trace_start_index-1] = trace_to_stitch
+    stitched_instrs[trace_start_index:trace_start_index] = trace_to_stitch
     for func in program["functions"]:
         if func["name"] == "main":
             func["instrs"] = stitched_instrs
