@@ -84,7 +84,7 @@ if __name__ == "__main__":
     trace_to_stitch = traces[hot_trace]
     stitched_instrs = funcs["main"].copy()
     trace_start_index = pc_to_index[hot_trace[0]]
-    trace_end_index = pc_to_index[hot_trace[-1]]
+    trace_end_index = pc_to_index[hot_trace[-1]] # fix list index out of range issue on specific args for factors.bril (i.e. 3, 5, etc)
 
     stitched_instrs.insert(trace_end_index, {"label": "hotpathsuccess"})
 
