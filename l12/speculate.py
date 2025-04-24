@@ -3,14 +3,41 @@ import json
 import sys
 from collections import Counter
 from pathlib import Path
+import subprocess
 
-if __name__ == "__main__":
+'''
+Usage: 
+$ python3 speculate.py --trace <filename>, must supply trace file obtained from a prior 'deno run brili.ts [-p args]' command.
+If using this command, must first run
+    $ bril2json < test.bril | deno run brili.ts [-p args]
+    to then run
+    $ bril2json < test.bril | python3 speculate.py --trace trace.txt
+
+$ python3 speculate.py --run-brili [-p args], avoids hard-coding trace.txt as an argument to speculate.py
+Does the speculative optimization in one command instead of two, unlike the above.
+'''
+
+if __name__ == "__main__":    
     parser = argparse.ArgumentParser()
-    parser.add_argument('trace', type=Path, help='Path of trace')
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--trace", type=Path, help="Path of the trace file")
+    group.add_argument("--run-brili-ts", action="store_true", help="Run brili.ts")
+    parser.add_argument('-p', '--params', nargs='*', help='Arguments to pass to brili.ts')
     args = parser.parse_args()
+    
     program = json.load(sys.stdin)
     funcs = {f["name"]: f["instrs"] for f in program["functions"]}
-    trace_lines = args.trace.read_text().splitlines()
+
+    if args.trace:
+        trace_lines = args.trace.read_text().splitlines()
+
+    elif args.run_brili_ts:
+        cmd = ["deno", "run", "--allow-write", "brili.ts"]
+        if args.params:
+            cmd.extend(args.params)
+        subprocess.run(cmd, input=json.dumps(program), text=True, stdout=subprocess.DEVNULL, stderr = subprocess.DEVNULL)
+        with open('trace.txt', 'r') as trace_file:
+            trace_lines = trace_file.read().splitlines()
 
     # Every time there's aa backedge, we start a new sequence of PCs
     # We count which sequence of PCs separated by a backedge happens most frequently
