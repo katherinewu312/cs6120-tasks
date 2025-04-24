@@ -7,14 +7,12 @@ pipeline = [
     "brili -p {args}",
 ]
 
-# TODO: figure out how to avoid hard-coding `trace.txt` 
-# as an arg to `speculate.py`
+# Seems like running brench on dynamically changing files cause nondeterministic results in brench.out, 
+# even though the benchmarks are correct when testing manually
 
-# Note: Brench reports `br.bril` as being correct under the `speculate`
-# workflow because `br.bril` doesn't have loops in it
 [runs.speculate]
 pipeline = [
     "bril2json",
-    "python3 speculate.py test/trace.txt",
+    "python3 speculate.py --run-brili-ts -p {args}",
     "brili -p {args}",
 ]
