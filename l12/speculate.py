@@ -34,6 +34,7 @@ if __name__ == "__main__":
     elif args.run_brili_ts:
         cmd = ["deno", "run", "--allow-write", "brili.ts"]
         if args.params:
+            cmd.append("-p")
             cmd.extend(args.params)
         subprocess.run(cmd, input=json.dumps(program), text=True, stdout=subprocess.DEVNULL, stderr = subprocess.DEVNULL)
         with open('trace.txt', 'r') as trace_file:
