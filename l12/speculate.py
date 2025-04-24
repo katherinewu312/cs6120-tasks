@@ -81,10 +81,20 @@ if __name__ == "__main__":
 
     hot_trace = trace_counter.most_common()[0][0]
     pc_to_index = [i for i, instr in enumerate(funcs["main"]) if "label" not in instr]
+    num_labels = len([i for i, instr in enumerate(funcs["main"]) if "label" in instr and i <= hot_trace[-1]])
+    
     trace_to_stitch = traces[hot_trace]
+    # print([i for i, instr in enumerate(funcs["main"]) if "label" in instr])
+    # print(num_labels)
+    # print(hot_trace)
+    # print(pc_to_index)
+    # print(traces)
+    # print(trace_to_stitch)
+    
+    
     stitched_instrs = funcs["main"].copy()
     trace_start_index = pc_to_index[hot_trace[0]]
-    trace_end_index = pc_to_index[hot_trace[-1]] # fix list index out of range issue on specific args for factors.bril (i.e. 3, 5, etc)
+    trace_end_index = pc_to_index[hot_trace[-1] - (num_labels-1)] # adjust index based on skipped labels in pc_to_index
 
     stitched_instrs.insert(trace_end_index, {"label": "hotpathsuccess"})
 
